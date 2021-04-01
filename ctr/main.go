@@ -1,5 +1,13 @@
 package main
 
-func init() {}
+import (
+	"github.com/ahojcn/ecloud/ctr/router"
+	"github.com/ahojcn/ecloud/ctr/util"
+)
 
-func main() {}
+func main() {
+	r := router.SetupRouter()
+
+	port := util.Config.Section("system").Key("listen_port").String()
+	r.Run(":" + port)
+}

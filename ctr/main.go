@@ -9,5 +9,5 @@ func main() {
 	r := router.SetupRouter()
 
 	port := util.Config.Section("system").Key("listen_port").String()
-	r.Run(":" + port)
+	_ = r.Run(":" + port)
 }

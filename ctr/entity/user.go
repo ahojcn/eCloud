@@ -1,25 +1,12 @@
 package entity
 
-import "time"
-
-type User struct {
-	Id         int64     `json:"id" xorm:"pk autoincr notnull"`
-	Username   string    `json:"username" xorm:"varchar(32) notnull default ''"`
-	Password   string    `json:"password" xorm:"varchar(128) notnull default ''"`
-	Email      string    `json:"email" xorm:"varchar(128) notnull default ''"`
-	Phone      string    `json:"phone" xorm:"varchar(16) notnull default ''"`
-	CreateTime time.Time `json:"create_time" xorm:"notnull created"`
-	UpdateTime time.Time `json:"update_time" xorm:"notnull updated"`
-	IsActive   int       `json:"is_active" xorm:"notnull default 0"`
-	Extra      string    `json:"extra" xorm:"varchar(1024) notnull default '{}'"`
+type UserRegisterRequestData struct {
+	Username  string `json:"username" binding:"required,alphanum,min=5,max=32" label:"用户名"`
+	Password  string `json:"password" binding:"required,min=5,max=18" label:"密码"`
+	RPassword string `json:"r_password" binding:"required,eqfield=Password" label:"重复密码"`
+	Email     string `json:"email" binding:"required,email" label:"邮箱"`
 }
 
-// IsActiveMsg 返回 user 对象中的 is_active 的文字描述
-func (u User) IsActiveMsg() string {
-	m := map[int]string{
-		0: "未激活",
-		1: "已激活",
-		2: "已禁用",
-	}
-	return m[u.IsActive]
+type UserInfoByIdRequestData struct {
+	Id int64 `uri:"id"`
 }

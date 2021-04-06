@@ -63,7 +63,7 @@ func UserAdd(user *User) error {
 		return err
 	}
 	if affected == 0 {
-		return errors.New("insert user failed, affected = 0")
+		return errors.New("insert failed, affected = 0")
 	}
 
 	return nil
@@ -75,7 +75,7 @@ func UserOne(cons map[string]interface{}) (*User, bool) {
 	user := new(User)
 	has, err := orm.Where(cons).Get(user)
 	if err != nil {
-		// todo log
+		return nil, false
 	}
 	return user, has
 }

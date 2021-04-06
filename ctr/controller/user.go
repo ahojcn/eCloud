@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// 用户注册
+// CreateUser 用户注册
 func CreateUser(c *gin.Context) {
 	var (
 		requestData entity.UserRegisterRequestData
@@ -43,7 +43,7 @@ func CreateUser(c *gin.Context) {
 	g.response(http.StatusOK, "ok", user.User2UserInfo())
 }
 
-// 获取用户信息
+// GetUserInfoById 获取用户信息
 func GetUserInfoById(c *gin.Context) {
 	g := newGin(c)
 
@@ -64,9 +64,9 @@ func GetUserInfoById(c *gin.Context) {
 }
 
 // todo 仅管理员
-// 更新用户信息
+// UpdateUserInfoById 更新用户信息
 func UpdateUserInfoById(c *gin.Context) {}
 
 // todo 仅管理员
-// 删除用户信息
+// DeleteUserInfoById 删除用户信息
 func DeleteUserInfoById(c *gin.Context) {}

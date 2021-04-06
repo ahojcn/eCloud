@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Tree struct {
 	Id          int64     `json:"id" xorm:"pk autoincr notnull"`
@@ -23,4 +26,37 @@ func (t Tree) TypeMsg() string {
 		4: "namespace",
 	}
 	return m[t.Type]
+}
+
+func TreeOne(cons map[string]interface{}) (*Tree, bool) {
+	orm := GetSlave()
+
+	t := new(Tree)
+	has, err := orm.Where(cons).Get(t)
+	if err != nil {
+		return nil, false
+	}
+	return t, has
+}
+
+func TreeAdd(tree *Tree) error {
+	orm := GetMaster()
+	affected, err := orm.Insert(tree)
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return errors.New("insert failed, affected = 0")
+	}
+	return nil
+}
+
+func TreeList(cons map[string]interface{}) ([]Tree, error) {
+	orm := GetSlave()
+	ts := make([]Tree, 0)
+	err := orm.Where(cons).Find(&ts)
+	if err != nil {
+		return nil, err
+	}
+	return ts, err
 }

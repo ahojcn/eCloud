@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-// 登录
+// Login 登录
 func Login(c *gin.Context) {
 	g := newGin(c)
 	sess := sessions.Default(c)
@@ -55,7 +55,7 @@ func Login(c *gin.Context) {
 	g.response(http.StatusOK, fmt.Sprintf("欢迎回来，%s", user.Username), user.User2UserInfo())
 }
 
-// 退出
+// Logout 退出
 func Logout(c *gin.Context) {
 	g := newGin(c)
 	sess := sessions.Default(c)

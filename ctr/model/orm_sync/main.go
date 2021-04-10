@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/model"
 	"github.com/ahojcn/ecloud/ctr/util"
 	_ "github.com/go-sql-driver/mysql"
@@ -10,10 +9,10 @@ import (
 
 var engine *xorm.Engine
 
-func init() {
+func main() {
 	var err error
 	// todo !
-	engine, err = xorm.NewEngine("mysql", util.Config.Section("mysql").Key("master").String())
+	engine, err = xorm.NewEngine("mysql", util.Config.Section("mysql_master").Key("master").String())
 	if err != nil {
 		panic(err)
 	}
@@ -21,9 +20,11 @@ func init() {
 	engine.ShowSQL(true)
 
 	// sync
-	err = engine.Sync(new(model.Tree), new(entity.User), new(model.UserTree))
+	err = engine.Sync(
+		new(model.Tree), new(model.User), new(model.UserTree),
+		new(model.HostUser), new(model.Host),
+	)
 	if err != nil {
 		panic(err)
 	}
 }
-

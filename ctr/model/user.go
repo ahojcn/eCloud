@@ -86,7 +86,23 @@ func UserList(cons map[string]interface{}) ([]User, error) {
 	users := make([]User, 0)
 	err := orm.Where(cons).Find(&users)
 	if err != nil {
-		// todo log
+		return nil, err
 	}
 	return users, err
+}
+
+func UsersInfoListByUsername(username string) ([]*UserInfo, error) {
+	orm := GetSlave()
+	users := make([]User, 0)
+	err := orm.Where("username like ?", "%"+username+"%").Find(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*UserInfo, 0)
+	for _, u := range users {
+		result = append(result, u.User2UserInfo())
+	}
+
+	return result, nil
 }

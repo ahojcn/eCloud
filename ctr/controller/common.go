@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"errors"
+	"github.com/ahojcn/ecloud/ctr/model"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/zh"
@@ -70,4 +73,19 @@ func (g *g) response(statusCode int, msg string, data interface{}) {
 		Msg:  msg,
 		Data: data,
 	})
+}
+
+func (g *g) loginRequired() (*model.User, error) {
+	sess := sessions.Default(g.C)
+	username := sess.Get("username")
+	if username == nil {
+		return nil, errors.New("登录信息过期")
+	}
+
+	user, has := model.UserOne(map[string]interface{}{"username": username})
+	if !has {
+		return nil, errors.New("未查找到对应用户")
+	}
+
+	return user, nil
 }

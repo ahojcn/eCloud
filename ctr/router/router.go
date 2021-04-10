@@ -23,14 +23,22 @@ func SetupRouter() *gin.Engine {
 		ctx.JSON(http.StatusNotFound, "404")
 	})
 
+	// 用户相关
 	Router.POST("/user", controller.CreateUser)
 	Router.GET("/user/:id", controller.GetUserInfoById)
+	Router.GET("/user", controller.GetUsersInfoByUsername)
 
+	// 会话控制
 	Router.POST("/session", controller.Login)
 	Router.DELETE("/session", controller.Logout)
 
+	// 服务树
 	Router.POST("/tree", controller.CreateTreeNode)
 	Router.GET("/tree", controller.GetTreeNodes)
+
+	// 资源 -- 主机
+	Router.POST("/host", controller.CreateHost)
+	Router.PUT("/host", controller.UpdateHost)
 
 	return Router
 }

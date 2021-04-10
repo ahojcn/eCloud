@@ -46,9 +46,14 @@ func CreateUser(c *gin.Context) {
 // GetUserInfoById 获取用户信息
 func GetUserInfoById(c *gin.Context) {
 	g := newGin(c)
+	_, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
 
 	var rd entity.UserInfoByIdRequestData
-	err := c.ShouldBindUri(&rd)
+	err = c.ShouldBindUri(&rd)
 	if err != nil {
 		g.response(http.StatusBadRequest, "参数错误", err)
 		return
@@ -61,6 +66,32 @@ func GetUserInfoById(c *gin.Context) {
 	}
 
 	g.response(http.StatusOK, "ok", user.User2UserInfo())
+}
+
+// GetUsersInfoByUsername 根据 username 模糊查询用户信息
+func GetUsersInfoByUsername(c *gin.Context) {
+	g := newGin(c)
+	_, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", nil)
+		return
+	}
+
+	var rd entity.GetUsersInfoByUsernameRequestData
+	err = c.ShouldBindQuery(&rd)
+	if err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	users, err := model.UsersInfoListByUsername(rd.Username)
+	if err != nil {
+		g.response(http.StatusInternalServerError, "服务器错误", err)
+		return
+	}
+
+	g.response(http.StatusOK, "ok", users)
+	return
 }
 
 // todo 仅管理员

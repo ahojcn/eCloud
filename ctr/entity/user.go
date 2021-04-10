@@ -8,5 +8,9 @@ type UserRegisterRequestData struct {
 }
 
 type UserInfoByIdRequestData struct {
-	Id int64 `uri:"id"`
+	Id int64 `uri:"id" binding:"required,gt=0" label:"用户id"`
+}
+
+type GetUsersInfoByUsernameRequestData struct {
+	Username string `form:"username" binding:"required,alphanum,min=0,max=32"`
 }

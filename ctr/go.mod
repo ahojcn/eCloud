@@ -13,13 +13,14 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/go-xorm/xorm v0.7.9
 	github.com/golang/protobuf v1.5.1 // indirect
+	github.com/influxdata/influxdb1-client v0.0.0-20200827194710-b269163b24ab
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/ugorji/go v1.2.4 // indirect
-	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670 // indirect
+	golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670
 	golang.org/x/sys v0.0.0-20210320140829-1e4c9ba3b0c4 // indirect
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

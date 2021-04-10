@@ -20,6 +20,8 @@ mkdir ${ROOT_PATH} -p
 cd ${ROOT_PATH}
 
 function downloadDksv() {
+  kill -9 `cat ./agent.pid` && rm -rf "./agent.log" && rm -rf "./agent.pid" && rm -rf "./agent"
+
   echo "${SERVER_ROOT_URL}${PREFIX}${1}" --output "agent"
   curl "${SERVER_ROOT_URL}${PREFIX}${1}" --output "agent"
   chmod +x "agent"

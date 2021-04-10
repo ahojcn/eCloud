@@ -11,7 +11,6 @@ var engine *xorm.Engine
 
 func main() {
 	var err error
-	// todo !
 	engine, err = xorm.NewEngine("mysql", util.Config.Section("mysql_master").Key("master").String())
 	if err != nil {
 		panic(err)

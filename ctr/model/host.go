@@ -42,7 +42,7 @@ func HostUpdate(id int64, host *Host) error {
 	orm := GetMaster()
 	affected, err := orm.ID(id).Update(host)
 	if affected == 0 {
-		return errors.New("insert failed, affected = 0")
+		return errors.New("update failed, affected = 0")
 	}
 	return err
 }

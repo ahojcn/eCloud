@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ahojcn/ecloud/agent/ctr"
 	"github.com/sevlyar/go-daemon"
 	"github.com/sirupsen/logrus"
 	"time"
@@ -35,6 +36,7 @@ func main() {
 }
 
 func Start() {
+	ctr.ReportHostExtra()
 	for {
 		logrus.Info(time.Now())
 		time.Sleep(1 * time.Second)

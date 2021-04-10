@@ -10,11 +10,11 @@ type CreateHostRequestData struct {
 
 type UpdateHostRequestData struct {
 	HostId      int64  `json:"host_id" binding:"required,gt=0" label:"主机id"`
-	UserId      int64  `json:"user_id" binding:"gt=0" label:"用户id"`
-	Description string `json:"description" binding:"min=1,max=1023" label:"主机描述"`
-	IP          string `json:"ip" binding:"ipv4" label:"ip地址"`
-	Username    string `json:"username" binding:"min=1,max=127" label:"用户名"`
-	Password    string `json:"password" binding:"min=1,max=127" label:"密码"`
-	Port        int    `json:"port" binding:"gt=0,lt=65534" label:"端口"`
-	Extra       string `json:"extra" binding:"" label:"额外信息"`
+	UserId      int64  `json:"user_id" binding:"omitempty,gt=0" label:"用户id"`
+	Description string `json:"description" binding:"omitempty,min=1,max=1023" label:"主机描述"`
+	IP          string `json:"ip" binding:"omitempty,ipv4" label:"ip地址"`
+	Username    string `json:"username" binding:"omitempty,min=1,max=127" label:"用户名"`
+	Password    string `json:"password" binding:"omitempty,min=1,max=127" label:"密码"`
+	Port        int    `json:"port" binding:"omitempty,gt=0,lt=65534" label:"端口"`
+	Extra       string `json:"extra" binding:"omitempty" label:"额外信息"`
 }

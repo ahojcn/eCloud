@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/model"
+	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func CreateHost(c *gin.Context) {
@@ -42,26 +42,11 @@ func CreateHost(c *gin.Context) {
 		return
 	}
 
-	runCmdTimeout := 10 * time.Second
-	res := []string{}
-	res1, err := host.RunCmd(fmt.Sprintf("mkdir -p /root/.eCloud" +
-		"&& cd /root/.eCloud" +
-		"&& curl -fsSL https://ahojcn.gitee.io/deploy.sh --output deploy.sh"+
-		"&& chmod +x deploy.sh"+
-		"&& ./deploy.sh %d %s %s" +
-		"&& echo ok",
-		host.Id, "10.4.7.1", "10001"), runCmdTimeout)
+	res, err := service.DeployAgent(host)
 	if err != nil {
-		g.response(http.StatusInternalServerError, "部署agent失败", err)
+		g.response(http.StatusInternalServerError, "部署失败", append(res, err.Error()))
 		return
 	}
-	res2, err := host.RunCmd("cd /root/.eCloud && cat agent.pid", runCmdTimeout)
-	if err != nil {
-		g.response(http.StatusInternalServerError, "获取agent pid失败", err)
-		return
-	}
-	res = append(res, res1)
-	res = append(res, res2)
 
 	g.response(http.StatusOK, "添加成功 && 部署 agent 成功", res)
 }
@@ -77,11 +62,12 @@ func UpdateHost(c *gin.Context) {
 		return
 	}
 
+	// todo here
 	h := &model.Host{
-		Description: rd.Description,
 		Extra:       rd.Extra,
 	}
 	err = model.HostUpdate(rd.HostId, h)
+	fmt.Println(err, rd.HostId, rd.Extra, rd.Description)
 	if err != nil {
 		g.response(http.StatusInternalServerError, "更新失败", err)
 		return

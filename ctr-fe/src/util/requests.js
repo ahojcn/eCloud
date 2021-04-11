@@ -1,8 +1,6 @@
 import axios from 'axios'
 import {LoadingBar, Notice} from 'view-design'
 
-axios.defaults.withCredentials = true
-
 // axios 实例
 const service = axios.create({
     baseURL: 'http://127.0.0.1:10001/',

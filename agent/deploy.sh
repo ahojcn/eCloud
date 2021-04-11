@@ -14,7 +14,7 @@ CTR_PORT=$3
 SYSNAME=$(uname -s)
 SYSLONG=$(uname -m)
 
-SERVER_ROOT_URL="https://ahojcn.gitee.io/"
+SERVER_ROOT_URL=$4
 ROOT_PATH="/root/.eCloud/"
 mkdir ${ROOT_PATH} -p
 cd ${ROOT_PATH}

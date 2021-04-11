@@ -18,3 +18,17 @@ type UpdateHostRequestData struct {
 	Port        int    `json:"port" binding:"omitempty,gt=0,lt=65534" label:"端口"`
 	Extra       string `json:"extra" binding:"omitempty" label:"额外信息"`
 }
+
+type DeleteHostRequestData struct {
+	HostId int64 `uri:"id" binding:"required,gt=0" label:"主机id"`
+}
+
+type CreateHostUserRequestData struct {
+	HostId int64 `json:"host_id" binding:"required,gt=0" label:"主机id"`
+	UserId int64 `json:"user_id" binding:"required,gt=0" label:"用户id"`
+}
+
+type DeleteHostUserRequestData struct {
+	HostId int64 `json:"host_id" binding:"required,gt=0" label:"主机id"`
+	UserId int64 `json:"user_id" binding:"required,gt=0" label:"用户id"`
+}

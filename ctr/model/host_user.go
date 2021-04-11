@@ -8,7 +8,7 @@ import (
 type HostUser struct {
 	Id         int64     `json:"id" xorm:"pk autoincr notnull"`
 	UserId     int64     `json:"user_id" xorm:"notnull default 0"`
-	TreeId     int64     `json:"tree_id" xorm:"notnull default 0"`
+	HostId     int64     `json:"host_id" xorm:"notnull default 0"`
 	CreateTime time.Time `json:"create_time" xorm:"notnull created"`
 	UpdateTime time.Time `json:"update_time" xorm:"notnull updated"`
 }
@@ -43,4 +43,13 @@ func HostUserList(cons map[string]interface{}) ([]HostUser, error) {
 		return nil, err
 	}
 	return hus, err
+}
+
+func HostUserDelete(hu *HostUser) error {
+	orm := GetMaster()
+	affected, err := orm.Delete(hu)
+	if affected == 0 {
+		return errors.New("delete failed, affected = 0")
+	}
+	return err
 }

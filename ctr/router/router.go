@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/ahojcn/ecloud/ctr/controller"
 	"github.com/ahojcn/ecloud/ctr/util"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,12 @@ func SetupRouter() *gin.Engine {
 		ctx.JSON(http.StatusNotFound, "404")
 	})
 
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:8081", "http://127.0.0.1:8081"}
+	config.AllowCredentials = true
+	//config.AllowAllOrigins = true
+	Router.Use(cors.New(config))
+
 	// 用户相关
 	Router.POST("/user", controller.CreateUser)
 	Router.GET("/user/:id", controller.GetUserInfoById)
@@ -39,6 +46,9 @@ func SetupRouter() *gin.Engine {
 	// 资源 -- 主机
 	Router.POST("/host", controller.CreateHost)
 	Router.PUT("/host", controller.UpdateHost)
+	Router.DELETE("/host/:id", controller.DeleteHost)
+	Router.POST("/host_user", controller.CreateHostUser)
+	Router.DELETE("/host_user", controller.DeleteHostUser)
 
 	return Router
 }

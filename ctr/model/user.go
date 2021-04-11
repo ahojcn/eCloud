@@ -71,7 +71,6 @@ func UserAdd(user *User) error {
 
 func UserOne(cons map[string]interface{}) (*User, bool) {
 	orm := GetSlave()
-
 	user := new(User)
 	has, err := orm.Where(cons).Get(user)
 	if err != nil {

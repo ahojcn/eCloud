@@ -50,7 +50,7 @@ func HostUpdate(id int64, host *Host) error {
 func HostOne(cons map[string]interface{}) (*Host, bool) {
 	orm := GetSlave()
 	host := new(Host)
-	has, err := orm.Where(cons).Get(&host)
+	has, err := orm.Where(cons).Get(host)
 	if err != nil {
 		return nil, false
 	}
@@ -66,4 +66,13 @@ func HostList(cons map[string]interface{}) ([]Host, error) {
 		return nil, err
 	}
 	return host, err
+}
+
+func HostDelete(host *Host) error {
+	orm := GetMaster()
+	affected, err := orm.Delete(host)
+	if affected == 0 {
+		return errors.New("delete failed, affected = 0")
+	}
+	return err
 }

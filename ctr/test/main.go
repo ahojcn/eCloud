@@ -3,13 +3,16 @@ package main
 import (
 	"fmt"
 	"github.com/ahojcn/ecloud/ctr/model"
+	"strings"
+	"time"
 )
 
 func main() {
-	h := new(model.Host)
-	h.Description = "测试主机"
-	//fmt.Println(model.HostAdd(h))
-
-	orm := model.GetMaster()
-	fmt.Println(orm.ID(1).Update(h))
+	h, _ := model.HostOne(map[string]interface{}{"id": 7})
+	res, _ := h.RunCmd("docker images", time.Second * 60)
+	sa := strings.Split(res, "\n")[1:]
+	sa = sa[:len(sa) - 1]
+	for _, s := range sa {
+		fmt.Println(s, "---")
+	}
 }

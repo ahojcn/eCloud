@@ -28,6 +28,7 @@ func CreateTreeNode(c *gin.Context) {
 	}
 
 	// 添加节点
+	// todo 在 user_tree 中添加记录
 	tree := &model.Tree{
 		Name:        data.Name,
 		Description: data.Description,
@@ -88,10 +89,14 @@ func buildTree(uti *model.UserTreeInfo, user *model.User) []*entity.GetTreeNodes
 	for _, t := range ts {
 		ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": t.Id})
 		if !has {
+			tmpUdi := &model.UserTreeInfo{Tree: t, Rights: 6}
+			bt := buildTree(tmpUdi, user)
+			nodes := &entity.GetTreeNodesResponseData{UserTreeInfo: tmpUdi, Children: bt}
+			rdata = append(rdata, nodes)
 			continue
 		}
-		uti := ut.UserTree2UserTreeInfo()
 
+		uti := ut.UserTree2UserTreeInfo()
 		rdata = append(rdata, &entity.GetTreeNodesResponseData{
 			UserTreeInfo: uti,
 			Children:     buildTree(uti, user),

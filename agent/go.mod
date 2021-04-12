@@ -7,6 +7,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/robfig/cron v1.2.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/shirou/gopsutil v3.21.3+incompatible
 	github.com/shirou/gopsutil/v3 v3.21.3

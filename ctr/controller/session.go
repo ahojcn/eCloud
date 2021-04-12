@@ -63,3 +63,14 @@ func Logout(c *gin.Context) {
 	_ = sess.Save()
 	g.response(http.StatusOK, "再见", nil)
 }
+
+func IsLogin(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	g.response(http.StatusOK, "已登录", user.User2UserInfo())
+}

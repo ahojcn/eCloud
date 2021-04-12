@@ -6,15 +6,8 @@ import (
 	"github.com/ahojcn/ecloud/agent/util"
 	"github.com/parnurzeal/gorequest"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 	"time"
 )
-
-type CtrResponse struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-}
 
 type HostExtra struct {
 	CpuInfo    util.CpuInfo    `json:"cpu_info"`
@@ -47,15 +40,10 @@ func ReportHostExtra() {
 		HostId: util.Config.Ctr.HostId,
 		Extra:  hostExtra.String(),
 	}
-	resp := CtrResponse{}
 	_, _, err := gorequest.New().Put(targetUrl).Retry(3, 3*time.Second, 500).
-		Send(d).EndStruct(&resp)
+		Send(d).EndBytes()
 	if err != nil {
 		log.Errorln("report host extra failed! err :", err)
-		return
-	}
-	if resp.Code != http.StatusOK {
-		log.Errorln("report host extra failed! err : ", resp)
 		return
 	}
 }

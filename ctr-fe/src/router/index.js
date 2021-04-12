@@ -1,14 +1,30 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 
-import Login from '@/components/Login'
+import Login from '@/view/Login'
+import Register from '@/view/Register'
+import Index from '@/view/Index'
 
-Vue.use(Router);
-export default new Router({
+Vue.use(VueRouter);
+
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+};
+
+export default new VueRouter({
     routes: [
         {
-            path: "/",
+            path: "/login",
             component: Login
+        },
+        {
+            path: "/register",
+            component: Register
+        },
+        {
+            path: "/",
+            component: Index
         }
     ]
 })

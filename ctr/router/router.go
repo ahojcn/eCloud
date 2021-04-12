@@ -38,6 +38,7 @@ func SetupRouter() *gin.Engine {
 	// 会话控制
 	Router.POST("/session", controller.Login)
 	Router.DELETE("/session", controller.Logout)
+	Router.GET("/session", controller.IsLogin)
 
 	// 服务树
 	Router.POST("/tree", controller.CreateTreeNode)
@@ -49,6 +50,10 @@ func SetupRouter() *gin.Engine {
 	Router.DELETE("/host/:id", controller.DeleteHost)
 	Router.POST("/host_user", controller.CreateHostUser)
 	Router.DELETE("/host_user", controller.DeleteHostUser)
+
+	// 监控
+	Router.POST("/metrics", controller.MonitorWriteMetrics)
+	Router.GET("/metrics", controller.MonitorQueryMetrics)
 
 	return Router
 }

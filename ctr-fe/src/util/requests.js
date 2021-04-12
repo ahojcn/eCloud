@@ -25,12 +25,16 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     res => {
         LoadingBar.finish();
-        console.log(res)
+
+        Notice.success({
+            title: res.data.msg
+        })
         return res.data
     },
     err => {
-        let data = err.response.data
         LoadingBar.error();
+
+        let data = err.response.data
         Notice.error({
             title: data.msg,
             desc: JSON.stringify(data.data)

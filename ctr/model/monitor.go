@@ -6,6 +6,14 @@ import (
 	"time"
 )
 
+// MetricsCPU CPU监控指标
+type MetricsCPU struct {
+	User    float64 `json:"user"` // cpu time
+	System  float64 `json:"system"`
+	Idle    float64 `json:"idle"`    // cpu idle
+	Percent float64 `json:"percent"` // cpu used percent
+}
+
 func connInflux() client.Client {
 	cli, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr:     "http://127.0.0.1:8086",

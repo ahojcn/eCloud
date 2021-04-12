@@ -1,4 +1,4 @@
-import request from '../util/requests'
+import request from '@/util/requests'
 
 // 登录
 export function login(data) {
@@ -9,11 +9,18 @@ export function login(data) {
     })
 }
 
-
-export function getYuQueOAuth(query) {
+// 登出
+export function logout() {
     return request({
-        url: 'user',
+        url: 'session',
+        method: 'delete',
+    })
+}
+
+// 判断是否登录
+export function is_login() {
+    return request({
+        url: 'session',
         method: 'get',
-        params: query
     })
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func TestReportHostInfo(t *testing.T) {
-	cpuinfo := new(util.DockerInfo)
+	cpuinfo := new(util.CpuInfoMonitor)
 	cpuinfo.Get()
 	b, _ := json.Marshal(cpuinfo)
 	t.Log(string(b))

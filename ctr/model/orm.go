@@ -4,12 +4,14 @@ import (
 	"github.com/ahojcn/ecloud/ctr/util"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	"github.com/influxdata/influxdb1-client/v2"
 	"math/rand"
 	"time"
 )
 
 var dbMaster *xorm.Engine
 var dbSlave []*xorm.Engine
+var dbInflux client.Client
 
 func init() {
 	var err error
@@ -39,6 +41,15 @@ func init() {
 			dbSlave = append(dbSlave, _dbSlave)
 		}
 	}
+
+	dbInflux, err = client.NewHTTPClient(client.HTTPConfig{
+		Addr:     util.Config.Section("influx_db").Key("addr").String(),
+		Username: util.Config.Section("influx_db").Key("username").String(),
+		Password: util.Config.Section("influx_db").Key("password").String(),
+	})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func GetMaster() *xorm.Engine {
@@ -49,4 +60,8 @@ func GetSlave() *xorm.Engine {
 	rand.Seed(time.Now().Unix())
 	n := rand.Intn(len(dbSlave))
 	return dbSlave[n]
+}
+
+func GetInfluxDB() client.Client {
+	return dbInflux
 }

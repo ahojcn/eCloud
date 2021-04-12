@@ -15,7 +15,7 @@ type UserTree struct {
 }
 
 type UserTreeInfo struct {
-	*Tree
+	Tree
 	Rights     int       `json:"rights"`
 	RightMsg   string    `json:"right_msg"`
 	CreateTime time.Time `json:"create_time" xorm:"notnull created"`
@@ -25,7 +25,7 @@ type UserTreeInfo struct {
 func (ut UserTree) UserTree2UserTreeInfo() *UserTreeInfo {
 	t, _ := TreeOne(map[string]interface{}{"id": ut.TreeId})
 	return &UserTreeInfo{
-		Tree:       t,
+		Tree:       *t,
 		Rights:     ut.Rights,
 		RightMsg:   ut.RightsMsg(),
 		CreateTime: ut.CreateTime,

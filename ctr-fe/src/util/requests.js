@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 import {LoadingBar, Notice} from 'view-design'
 
 // axios 实例
@@ -14,9 +15,17 @@ const service = axios.create({
 service.interceptors.request.use(
     config => {
         LoadingBar.start();
+        // 默认 get 请求 query array 是 col[]=aaa&col[]=bbb
+        // 引入 qs 插件转为 col=aaa&col=bbb
+        if(config.method === 'get') {
+            config.paramsSerializer = function (params) {
+                return qs.stringify(params, {arrayFormat: 'repeat'})
+            }
+        }
         return config;
     },
     err => {
+        LoadingBar.error();
         return err;
     }
 );

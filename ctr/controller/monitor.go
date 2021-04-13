@@ -30,7 +30,7 @@ func MonitorQueryMetrics(c *gin.Context) {
 		return
 	}
 
-	res, err := service.MonitorMetricsQuery(rd.HostId, rd.Metrics)
+	res, err := service.MonitorMetricsQuery(rd.HostId, rd.Metrics, rd.Cols)
 	if err != nil {
 		g.response(http.StatusInternalServerError, "查询出错", err)
 		return

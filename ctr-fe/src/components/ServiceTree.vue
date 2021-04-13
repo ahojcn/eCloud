@@ -25,8 +25,9 @@ export default {
   },
   mounted() {
     get_tree().then(res => {
-      this.tree = res.data
-      console.log(res)
+      if (res.code === 200) {
+        this.tree = res.data
+      }
     })
   },
   methods: {

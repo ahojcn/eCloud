@@ -7,6 +7,7 @@ type MonitorWriteMetricsRequestData struct {
 }
 
 type MonitorQueryMetricsRequestData struct {
-	HostId  int64                  `form:"host_id" binding:"required,gt=0" label:"主机id"`
-	Metrics string                 `form:"metrics" binding:"required" label:"指标"`
+	HostId  int64    `form:"host_id" binding:"required,gt=0" label:"主机id"`
+	Metrics string   `form:"metrics" binding:"required" label:"指标"`
+	Cols    []string `form:"cols" binding:"required" label:"列"`
 }

@@ -69,20 +69,15 @@ func (d *DiskInfo) Get() error {
 }
 
 type DiskInfoMonitor struct {
-	Usage []*disk.UsageStat                `json:"usage"`
-	IO    []map[string]disk.IOCountersStat `json:"io"`
+	Usage *disk.UsageStat `json:"usage"`
 }
 
 func (d *DiskInfoMonitor) Get() error {
 	var err error
 	diskInfo := new(DiskInfo)
 	err = diskInfo.Get()
-	for _, partition := range diskInfo.Partitions {
-		usageStat, _ := disk.Usage(partition.Mountpoint)
-		io, _ := disk.IOCounters(partition.Mountpoint)
-		d.Usage = append(d.Usage, usageStat)
-		d.IO = append(d.IO, io)
-	}
+	us, _ := disk.Usage("/")
+	d.Usage = us
 
 	return err
 }

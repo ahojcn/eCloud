@@ -5,6 +5,7 @@ import (
 	"github.com/ahojcn/ecloud/ctr/model"
 	client "github.com/influxdata/influxdb1-client/v2"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -28,9 +29,14 @@ func MonitorMetricsWrite(hostId int64, metrics string, data map[string]interface
 	_ = cli.Write(bp)
 }
 
-func MonitorMetricsQuery(hostId int64, metrics string) (res []client.Result, err error) {
+func MonitorMetricsQuery(hostId int64, metrics string, cols []string) (res []client.Result, err error) {
 	cli := model.GetInfluxDB()
-	cmd := fmt.Sprintf("select percent from %s where host_id='%s'", getTableNameByMetrics(metrics), strconv.FormatInt(hostId, 10))
+	ss := []string{}
+	for _, s := range cols {
+		ss = append(ss, fmt.Sprintf("\"%s\"", s))
+	}
+	fmt.Println(ss, cols)
+	cmd := fmt.Sprintf(`select %s from %s where host_id='%s'`, strings.Join(ss, ","), getTableNameByMetrics(metrics), strconv.FormatInt(hostId, 10))
 	fmt.Println(cmd)
 
 	q := client.Query{

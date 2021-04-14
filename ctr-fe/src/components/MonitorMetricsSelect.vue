@@ -1,18 +1,22 @@
 <template>
-  <div style="width: 100%; height: 100%">
-    <Tabs @on-click="onClickTab">
-      <TabPane v-for="(metric,index) in metrics" :key="index"
-               :label="metric" :name="metric">
-        <CheckboxGroup v-model="cols_selected">
-          <Checkbox v-for="(col, index) in cols[metric]" :key="index" :label="col" border></Checkbox>
-        </CheckboxGroup>
-      </TabPane>
-    </Tabs>
+  <Card>
+    <div style="width: 100%; height: 100%">
+      <Tabs @on-click="onClickTab">
+        <TabPane v-for="(metric,index) in metrics" :key="index"
+                 :label="metric" :name="metric">
+          <CheckboxGroup v-model="cols_selected">
+            <Checkbox v-for="(col, index) in cols[metric]" :key="index" :label="col" border></Checkbox>
+          </CheckboxGroup>
+        </TabPane>
+      </Tabs>
 
-    <div>
-      <Button type="primary" @click="onClickBtnGet">GET！</Button>
+      <div>
+        <DatePicker type="datetimerange" placeholder="选择时间段"
+                    style="width: 300px"></DatePicker>
+        <Button type="primary" @click="onClickBtnGet">GET！</Button>
+      </div>
     </div>
-  </div>
+  </Card>
 </template>
 
 <script>
@@ -37,7 +41,7 @@ export default {
           "total", "free", "used", "percent", "inodes_total", "inodes_used", "inodes_free", "inodes_percent"
         ],
         "load": [
-          "load1", "load5", "load15", "process_count"
+          "load_1", "load_5", "load_15", "process_count"
         ],
         "net": [
           "bytes_sent", "bytes_recv", "packets_sent", "packets_recv", "err_in", "err_out", "drop_in",
@@ -50,6 +54,7 @@ export default {
   methods: {
     onClickTab(name) {
       this.metrics_selected = name
+      this.cols_selected.length = 0
     },
     onClickBtnGet() {
       if (this.metrics_selected !== '' && this.cols_selected.length !== 0) {

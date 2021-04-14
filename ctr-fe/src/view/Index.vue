@@ -1,43 +1,44 @@
 <template>
   <div>
     <Menu mode="horizontal" theme="light" active-name="1" @on-select="handleMenuSelect">
-      <MenuItem name="1">
-        <Icon type="ios-paper"/>
-        内容管理
-      </MenuItem>
-      <MenuItem name="2">
-        <Icon type="ios-people"/>
-        用户管理
-      </MenuItem>
-      <Submenu name="3">
-        <template slot="title">
-          <Icon type="ios-stats"/>
-          统计分析
-        </template>
-        <MenuGroup title="使用">
-          <MenuItem name="3-1">新增和启动</MenuItem>
-          <MenuItem name="3-2">活跃分析</MenuItem>
-          <MenuItem name="3-3">时段分析</MenuItem>
-        </MenuGroup>
-        <MenuGroup title="留存">
-          <MenuItem name="3-4">用户留存</MenuItem>
-          <MenuItem name="3-5">流失用户</MenuItem>
-        </MenuGroup>
-      </Submenu>
-      <MenuItem name="4">
-        <Icon type="ios-construct"/>
-        综合设置
-      </MenuItem>
-
-      <Submenu name="avatar">
-        <template slot="title">
-          <Avatar size="large" style="color: #f56a00;background-color: #fde3cf">{{ user_info.username }}</Avatar>
-        </template>
-        <MenuItem name="logout">
-          <Icon type="md-exit"/>
-          退出
+      <div>
+        <MenuItem name="service">
+          <Icon type="md-infinite"/>
+          服务
         </MenuItem>
-      </Submenu>
+        <MenuItem name="perm">
+          <Icon type="ios-people"/>
+          权限
+        </MenuItem>
+        <MenuItem name="monitor">
+          <Icon type="ios-stats"/>
+          监控
+        </MenuItem>
+        <MenuItem name="deploy">
+          <Icon type="md-cloud-upload"/>
+          部署
+        </MenuItem>
+        <MenuItem name="resource">
+          <Icon type="md-code-working"/>
+          资源
+        </MenuItem>
+        <MenuItem name="dev">
+          <Icon type="ios-bug"/>
+          开发
+        </MenuItem>
+      </div>
+
+      <div style="margin-right: 12px;float: right">
+        <Submenu name="avatar">
+          <template slot="title">
+            <Avatar size="large" style="color: #f56a00;background-color: #fde3cf">{{ user_info.username }}</Avatar>
+          </template>
+          <MenuItem name="logout">
+            <Icon type="md-exit"/>
+            退出
+          </MenuItem>
+        </Submenu>
+      </div>
     </Menu>
 
     <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>
@@ -50,7 +51,6 @@
 import {is_login, logout} from "@/api/session";
 import ServiceTree from "@/components/ServiceTree";
 import Chart from "@/components/Chart";
-
 import {get_metrics_data} from "@/api/monitor"
 import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
 
@@ -106,7 +106,7 @@ export default {
           show: true,
           trigger: 'axis',
           axisPointer: {
-            type: 'cross'
+            type: 'cross',
           },
         },
         legend: {
@@ -118,8 +118,7 @@ export default {
         yAxis: {
           type: 'value',
         },
-        series: [
-        ]
+        series: []
       }
     }
   },
@@ -154,9 +153,11 @@ export default {
     },
     onMonitorMetricsSelected(metric, cols) {
       this.options.legend.data = cols
+      this.options.series.length = 0
+      this.options.title.text = metric
       for (let i = 0; i < cols.length; i++) {
         get_metrics_data({
-          "host_id": '11',
+          "host_id": '12',
           "metrics": metric,
           "cols": cols[i]
         }).then(res => {
@@ -169,5 +170,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

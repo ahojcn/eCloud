@@ -22,7 +22,7 @@ export default {
     }
   },
   mounted() {
-    this.chart = echarts.init(document.getElementById('container'))
+    this.chart = echarts.init(document.getElementById('container'), "light", {useDirtyRect: true})
     this.chart.setOption(this.$props.options)
   },
   watch: {
@@ -41,5 +41,10 @@ export default {
 #container {
   width: 100%;
   height: 100%;
+  background-image: url('../assets/logo.png');
+  /*background-attachment: fixed;*/
+  background-size: 200px 200px;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>

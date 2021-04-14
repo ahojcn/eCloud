@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <transition>
-      <img class="animate__animated animate__flip"
-           :style="{width: size}" id="logo"
-           src="@/assets/logo.png" alt="logo" @click="$router.push('/')">
-    </transition>
-  </div>
+  <transition>
+    <img class="animate__animated animate__flip"
+         :style="{width: size}" id="logo"
+         src="@/assets/logo.png" alt="logo" @click="$router.push('/')">
+  </transition>
 </template>
 
 <script>

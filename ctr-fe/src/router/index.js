@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import Login from '@/view/Login'
 import Register from '@/view/Register'
 import Index from '@/view/Index'
+import IndexService from '@/view/Index/Service'
 
 Vue.use(VueRouter);
 
@@ -24,7 +25,13 @@ export default new VueRouter({
         },
         {
             path: "/",
-            component: Index
+            component: Index,
+            children: [
+                {
+                    path: '/service',
+                    component: IndexService,
+                }
+            ]
         }
     ]
 })

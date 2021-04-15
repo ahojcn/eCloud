@@ -6,10 +6,14 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         user_info: {},
+        menu_active_name: 'service',
     },
     mutations: {
-        set_user_info(state, user_info) {
+        setUserInfo(state, user_info) {
             state.user_info = user_info
-        }
+        },
+        setMenuActiveName(state, name) {
+            state.menu_active_name = name
+        },
     }
 })

@@ -1,62 +1,69 @@
 <template>
-  <div>
-    <Menu mode="horizontal" theme="light" active-name="1" @on-select="handleMenuSelect">
-      <div>
-        <MenuItem name="service">
-          <Icon type="md-infinite"/>
-          服务
-        </MenuItem>
-        <MenuItem name="perm">
-          <Icon type="ios-people"/>
-          权限
-        </MenuItem>
-        <MenuItem name="monitor">
-          <Icon type="ios-stats"/>
-          监控
-        </MenuItem>
-        <MenuItem name="deploy">
-          <Icon type="md-cloud-upload"/>
-          部署
-        </MenuItem>
-        <MenuItem name="resource">
-          <Icon type="md-code-working"/>
-          资源
-        </MenuItem>
-        <MenuItem name="dev">
-          <Icon type="ios-bug"/>
-          开发
-        </MenuItem>
-      </div>
-
-      <div style="margin-right: 12px;float: right">
-        <Submenu name="avatar">
-          <template slot="title">
-            <Avatar size="large" style="color: #f56a00;background-color: #fde3cf">{{ user_info.username }}</Avatar>
-          </template>
-          <MenuItem name="logout">
-            <Icon type="md-exit"/>
-            退出
+  <Layout>
+    <Header :style="{position: 'fixed', width: '100%'}">
+      <Menu :active-name="active_name" mode="horizontal" theme="dark" @on-select="handleMenuSelect">
+        <div>
+          <MenuItem name="service">
+            <Icon type="md-infinite"/>
+            服务
           </MenuItem>
-        </Submenu>
-      </div>
-    </Menu>
+          <MenuItem name="perm">
+            <Icon type="ios-people"/>
+            权限
+          </MenuItem>
+          <MenuItem name="monitor">
+            <Icon type="ios-stats"/>
+            监控
+          </MenuItem>
+          <MenuItem name="deploy">
+            <Icon type="md-cloud-upload"/>
+            部署
+          </MenuItem>
+          <MenuItem name="resource">
+            <Icon type="md-code-working"/>
+            资源
+          </MenuItem>
+          <MenuItem name="dev">
+            <Icon type="ios-bug"/>
+            开发
+          </MenuItem>
+        </div>
 
-    <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>
-    <Chart :options="options" style="width: 1000px; height: 500px"></Chart>
-    <ServiceTree @onTreeNodeSelected="onTreeNodeSelected"></ServiceTree>
-  </div>
+        <div style="margin-right: 12px;float: right">
+          <Submenu name="avatar">
+            <template slot="title">
+              <Avatar size="large" style="color: #f56a00;background-color: #fde3cf">{{ user_info.username }}</Avatar>
+            </template>
+            <MenuItem name="logout">
+              <Icon type="md-exit"/>
+              退出
+            </MenuItem>
+          </Submenu>
+        </div>
+      </Menu>
+    </Header>
+
+<!--    <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>-->
+<!--    <Chart :options="options" style="width: 1000px; height: 500px"></Chart>-->
+    <Content :style="{margin: '88px 20px 0', background: '#fff', minHeight: '500px'}">
+      <ServiceTree style="height: 100%" @onTreeNodeSelected="onTreeNodeSelected"></ServiceTree>
+    </Content>
+
+    <Footer :style="{textAlign: 'center'}">2021 &copy; eCloud @ahojcn@qq.com</Footer>
+  </Layout>
 </template>
 
 <script>
 import {is_login, logout} from "@/api/session";
 import ServiceTree from "@/components/ServiceTree";
-import Chart from "@/components/Chart";
+// import Chart from "@/components/Chart";
 import {get_metrics_data} from "@/api/monitor"
-import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
+// import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
 
 export default {
   name: "Index",
-  components: {MonitorMetricsSelect, Chart, ServiceTree},
+  // components: {MonitorMetricsSelect, Chart, ServiceTree},
+  components: {ServiceTree},
   data() {
     return {
       options: {
@@ -125,18 +132,22 @@ export default {
   computed: {
     user_info() {
       return this.$store.state.user_info
-    }
+    },
+    active_name() {
+      return this.$store.state.menu_active_name
+    },
   },
   mounted() {
     is_login().then(res => {
       if (res.code !== 200) {
         this.$router.push("/login")
       }
-      this.$store.commit('set_user_info', res.data)
+      this.$store.commit('setUserInfo', res.data)
     })
   },
   methods: {
     handleMenuSelect(name) {
+      this.$store.commit('setMenuActiveName', name)
       if (name === 'logout') {
         this.handleClickLogout()
       }

@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <Card>
-      <Tree :data="tree" :render="renderContent" @on-select-change="onSelectChange"></Tree>
-    </Card>
-  </div>
+  <Card>
+    <Tree :data="tree" :render="renderContent" @on-select-change="onSelectChange"></Tree>
+  </Card>
 </template>
 
 <script>

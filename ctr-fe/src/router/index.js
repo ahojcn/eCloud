@@ -25,6 +25,8 @@ export default new VueRouter({
         },
         {
             path: "/",
+            name: "Index",
+            redirect: "/service",
             component: Index,
             children: [
                 {

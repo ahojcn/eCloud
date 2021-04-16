@@ -46,7 +46,7 @@
 <!--    <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>-->
 <!--    <Chart :options="options" style="width: 1000px; height: 500px"></Chart>-->
     <Content :style="{margin: '88px 20px 0', background: '#fff', minHeight: '500px'}">
-      <ServiceTree style="height: 100%" @onTreeNodeSelected="onTreeNodeSelected"></ServiceTree>
+      <router-view></router-view>
     </Content>
 
     <Footer :style="{textAlign: 'center'}">2021 &copy; eCloud @ahojcn@qq.com</Footer>
@@ -55,7 +55,6 @@
 
 <script>
 import {is_login, logout} from "@/api/session";
-import ServiceTree from "@/components/ServiceTree";
 // import Chart from "@/components/Chart";
 import {get_metrics_data} from "@/api/monitor"
 // import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
@@ -63,7 +62,6 @@ import {get_metrics_data} from "@/api/monitor"
 export default {
   name: "Index",
   // components: {MonitorMetricsSelect, Chart, ServiceTree},
-  components: {ServiceTree},
   data() {
     return {
       options: {
@@ -159,9 +157,7 @@ export default {
         }
       })
     },
-    onTreeNodeSelected(node) {
-      console.log(node)
-    },
+
     onMonitorMetricsSelected(metric, cols) {
       this.options.legend.data = cols
       this.options.series.length = 0

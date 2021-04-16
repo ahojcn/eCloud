@@ -9,7 +9,18 @@ type CreateTreeNodeRequestData struct {
 	ParentId    int64  `json:"parent_id" binding:"required,gt=1"`
 }
 
-type GetTreeNodesResponseData struct {
+type TreeNodeInfo struct {
 	*model.UserTreeInfo
-	Children []*GetTreeNodesResponseData `json:"children"`
+	Children []*TreeNodeInfo `json:"children"`
+}
+
+type TreeNodeDetail struct {
+	UserTreeInfo *model.UserTreeInfo `json:"user_tree_info"`
+	Users        []*model.UserInfo   `json:"users"`
+	Children     []*TreeNodeInfo     `json:"children"`
+}
+
+type GetTreeNodeRequestData struct {
+	Id   *int64  `form:"id" binding:"omitempty,gt=0" label:"服务树节点id"`
+	Name *string `form:"name" binding:"omitempty" label:"服务树名"`
 }

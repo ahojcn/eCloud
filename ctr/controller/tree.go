@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/model"
-	"github.com/gin-contrib/sessions"
+	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -47,60 +47,35 @@ func CreateTreeNode(c *gin.Context) {
 // GetTreeNodes 获取有权限的树节点
 func GetTreeNodes(c *gin.Context) {
 	g := newGin(c)
-	sess := sessions.Default(c)
-	username := sess.Get("username")
-	if username == nil {
-		g.response(http.StatusUnauthorized, "未登录", nil)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
 		return
 	}
-	// 获取用户信息
-	user, has := model.UserOne(map[string]interface{}{"username": username})
-	if !has {
-		g.response(http.StatusUnauthorized, "未登录", nil)
+
+	rd := entity.GetTreeNodeRequestData{}
+	if err = c.ShouldBindQuery(&rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
 		return
 	}
-	uts, err := model.UserTreeList(map[string]interface{}{"user_id": user.Id})
+
+	if rd.Id != nil {
+		treeNodeDetail, err := service.GetTreeNodesDetailById(*rd.Id, user)
+		if err != nil {
+			g.response(http.StatusInternalServerError, "服务器错误", err)
+			return
+		}
+		g.response(http.StatusOK, "ok", treeNodeDetail)
+		return
+	} else if rd.Name != nil {
+	}
+
+	rdata, err := service.GetAllTreeNodeByUser(user)
 	if err != nil {
 		g.response(http.StatusInternalServerError, "服务器错误", err)
 		return
 	}
 
-	rdata := []*entity.GetTreeNodesResponseData{}
-	for _, ut := range uts {
-		uti := ut.UserTree2UserTreeInfo()
-		if uti.ParentId == 0 {
-			rdata = append(rdata, &entity.GetTreeNodesResponseData{
-				UserTreeInfo: uti,
-				Children:     buildTree(uti, user),
-			})
-		}
-	}
-
 	g.response(http.StatusOK, "ok", rdata)
 	return
-}
-
-func buildTree(uti *model.UserTreeInfo, user *model.User) []*entity.GetTreeNodesResponseData {
-	ts, err := model.TreeList(map[string]interface{}{"parent_id": uti.Id})
-	if err != nil {
-		return []*entity.GetTreeNodesResponseData{}
-	}
-	rdata := []*entity.GetTreeNodesResponseData{}
-	for _, t := range ts {
-		ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": t.Id})
-		if !has {
-			tmpUdi := &model.UserTreeInfo{Tree: t, Rights: 6}
-			bt := buildTree(tmpUdi, user)
-			nodes := &entity.GetTreeNodesResponseData{UserTreeInfo: tmpUdi, Children: bt}
-			rdata = append(rdata, nodes)
-			continue
-		}
-
-		uti := ut.UserTree2UserTreeInfo()
-		rdata = append(rdata, &entity.GetTreeNodesResponseData{
-			UserTreeInfo: uti,
-			Children:     buildTree(uti, user),
-		})
-	}
-	return rdata
 }

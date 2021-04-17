@@ -7,6 +7,61 @@ import (
 	"time"
 )
 
+func CreateTreeWithUser(user *model.User, data entity.CreateTreeNodeRequestData) error {
+	// 判断用户是否有这个 parent_id 节点的新增权限（4）
+	if *data.ParentId != 0 {
+		ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": data.ParentId})
+		if !has {
+			return fmt.Errorf("没有权限")
+		}
+		if ut.Rights < 4 || ut.Rights > 6 {
+			return fmt.Errorf("没有权限")
+		}
+	}
+
+	// 判断用户是否有同类型同名的节点
+	tl, err := model.TreeList(map[string]interface{}{"parent_id": data.ParentId, "name": data.Name})
+	if err != nil {
+		return fmt.Errorf("内部错误:%v", err)
+	}
+	if len(tl) != 0 {
+		return fmt.Errorf("在节点%v下已经有节点名为%v的节点了", *data.ParentId, data.Name)
+	}
+
+	// 判断 parent_id 是否存在
+	_, has := model.TreeOne(map[string]interface{}{"id": data.ParentId})
+	if !has {
+		return fmt.Errorf("父节点不存在")
+	}
+
+	// 添加节点
+	tree := &model.Tree{
+		Name:        data.Name,
+		Description: data.Description,
+		Type:        *data.Type,
+		ParentId:    *data.ParentId,
+	}
+	err = model.TreeAdd(tree)
+	if err != nil {
+		return fmt.Errorf("创建失败")
+	}
+
+	ut := &model.UserTree{
+		UserId:     user.Id,
+		TreeId:     tree.Id,
+		Rights:     6,
+		CreateTime: time.Now(),
+		UpdateTime: time.Now(),
+	}
+	err = model.UserTreeAdd(ut)
+	if err != nil {
+		// todo 删除上面创建的 tree
+		return fmt.Errorf("创建失败")
+	}
+
+	return nil
+}
+
 // GetAllTreeNodeByUser 获取用户所有有权限的节点信息，组织称树状
 func GetAllTreeNodeByUser(user *model.User) ([]*entity.TreeNodeInfo, error) {
 	uts, err := model.UserTreeList(map[string]interface{}{"user_id": user.Id})
@@ -16,6 +71,10 @@ func GetAllTreeNodeByUser(user *model.User) ([]*entity.TreeNodeInfo, error) {
 	rdata := []*entity.TreeNodeInfo{}
 	for _, ut := range uts {
 		uti := ut.UserTree2UserTreeInfo()
+		if uti.Tree.Un == "" {
+			uti.Tree.Un = uti.Name
+			_ = model.TreeUpdate(uti.Tree.Id, uti.Tree)
+		}
 		if uti.ParentId == 0 {
 			rdata = append(rdata, &entity.TreeNodeInfo{
 				UserTreeInfo: uti,
@@ -50,6 +109,11 @@ func buildTree(uti *model.UserTreeInfo, user *model.User) []*entity.TreeNodeInfo
 			continue
 		}
 
+		if t.Un == "" {
+			t.Un = t.Name + "." + uti.Un
+			_ = model.TreeUpdate(t.Id, &t)
+		}
+
 		uti := ut.UserTree2UserTreeInfo()
 		rdata = append(rdata, &entity.TreeNodeInfo{
 			UserTreeInfo: uti,
@@ -67,11 +131,7 @@ func GetTreeNodesDetailById(nodeId int64, user *model.User) (*entity.TreeNodeDet
 		return nil, fmt.Errorf("获取用户-服务树信息失败，err=%v", err)
 	}
 	for _, ut := range utl {
-		u, has := model.UserOne(map[string]interface{}{"id": ut.UserId})
-		if !has {
-			continue
-		}
-		res.Users = append(res.Users, u.User2UserInfo())
+		res.Users = append(res.Users, *ut.UserTree2UserTreeInfo())
 	}
 
 	uti, has := model.UserTreeOne(map[string]interface{}{"tree_id": nodeId, "user_id": user.Id})
@@ -81,4 +141,52 @@ func GetTreeNodesDetailById(nodeId int64, user *model.User) (*entity.TreeNodeDet
 	res.UserTreeInfo = uti.UserTree2UserTreeInfo()
 	res.Children = buildTree(res.UserTreeInfo, user)
 	return res, nil
+}
+
+// GetTreeNodeInfoByName 根据服务树 name 获取服务树节点信息，模糊匹配
+func GetTreeNodeInfoByName(name string, user *model.User) ([]model.Tree, error) {
+	return model.TreeInfoByNodeNameOrDesc(name)
+}
+
+// AddUserTree 给一个用户添加权限
+func AddUserTree(user *model.User, userId, treeId int64, rights int) error {
+	ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": treeId})
+	if !has {
+		return fmt.Errorf("你没有权限")
+	}
+	if ut.Rights != 6 {
+		return fmt.Errorf("你没有权限")
+	}
+
+	if rights < 0 || rights > 6 {
+		return fmt.Errorf("权限错误:0-6")
+	}
+
+	_, has = model.UserOne(map[string]interface{}{"id": userId})
+	if !has {
+		return fmt.Errorf("没有这个用户")
+	}
+	_, has = model.TreeOne(map[string]interface{}{"id": treeId})
+	if !has {
+		return fmt.Errorf("没有这个用户")
+	}
+
+	ut, has = model.UserTreeOne(map[string]interface{}{"user_id": userId, "tree_id": treeId})
+	if has {
+		ut.Rights = rights
+		if err := model.UserTreeUpdate(ut.Id, ut); err != nil {
+			return fmt.Errorf("这个用户已有权限:%v，但是更新权限失败了:%v", ut.RightsMsg(), err)
+		}
+		return nil
+	}
+
+	if err := model.UserTreeAdd(&model.UserTree{
+		UserId: userId,
+		TreeId: treeId,
+		Rights: rights,
+	}); err != nil {
+		return fmt.Errorf("添加失败:%v", err)
+	}
+
+	return nil
 }

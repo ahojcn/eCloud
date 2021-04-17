@@ -8,6 +8,7 @@ import (
 type Tree struct {
 	Id          int64     `json:"id" xorm:"pk autoincr notnull"`
 	Name        string    `json:"name" xorm:"varchar(128) notnull default ''"`
+	Un          string    `json:"un" xorm:"text notnull"`
 	Description string    `json:"description" xorm:"varchar(1024) notnull default ''"`
 	Type        int       `json:"type" xorm:"notnull default 0"`
 	ParentId    int64     `json:"parent_id" xorm:"notnull default 0"`
@@ -59,4 +60,23 @@ func TreeList(cons map[string]interface{}) ([]Tree, error) {
 		return nil, err
 	}
 	return ts, err
+}
+
+func TreeInfoByNodeNameOrDesc(name string) ([]Tree, error) {
+	orm := GetSlave()
+	tl := make([]Tree, 0)
+	err := orm.Where("name like ?", "%"+name+"%").Or("description like ?", "%"+name+"%").Find(&tl)
+	if err != nil {
+		return nil, err
+	}
+	return tl, nil
+}
+
+func TreeUpdate(id int64, t *Tree) error {
+	orm := GetMaster()
+	affected, err := orm.ID(id).Update(t)
+	if affected == 0 {
+		return errors.New("update failed, affected = 0")
+	}
+	return err
 }

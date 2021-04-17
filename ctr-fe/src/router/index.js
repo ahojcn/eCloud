@@ -5,6 +5,7 @@ import Login from '@/view/Login'
 import Register from '@/view/Register'
 import Index from '@/view/Index'
 import IndexService from '@/view/Index/Service'
+import IndexResource from '@/view/Index/Resource'
 
 Vue.use(VueRouter);
 
@@ -32,6 +33,10 @@ export default new VueRouter({
                 {
                     path: '/service',
                     component: IndexService,
+                },
+                {
+                    path: '/resource',
+                    component: IndexResource
                 }
             ]
         }

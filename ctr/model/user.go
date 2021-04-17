@@ -93,7 +93,8 @@ func UserList(cons map[string]interface{}) ([]User, error) {
 func UsersInfoListByUsername(username string) ([]*UserInfo, error) {
 	orm := GetSlave()
 	users := make([]User, 0)
-	err := orm.Where("username like ?", "%"+username+"%").Find(&users)
+	err := orm.Where("username like ?", "%"+username+"%").
+		Or("email like ?", "%"+username+"%").Find(&users)
 	if err != nil {
 		return nil, err
 	}

@@ -8,3 +8,12 @@ export function register(data) {
         data
     })
 }
+
+// 根据用户名或邮箱获取用户列表
+export function apiGetUserListByUsername(params) {
+    return request({
+        url: 'user',
+        method: 'get',
+        params: params
+    })
+}

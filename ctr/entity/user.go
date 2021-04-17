@@ -12,5 +12,5 @@ type UserInfoByIdRequestData struct {
 }
 
 type GetUsersInfoByUsernameRequestData struct {
-	Username string `form:"username" binding:"required,alphanum,min=0,max=32"`
+	Username string `form:"username" binding:"required,min=0,max=32"`
 }

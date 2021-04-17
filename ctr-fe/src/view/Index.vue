@@ -1,15 +1,11 @@
 <template>
   <Layout>
-    <Header :style="{position: 'fixed', width: '100%'}">
+    <Header :style="{position: 'fixed', width: '100%', zIndex: 9999}">
       <Menu :active-name="active_name" mode="horizontal" theme="dark" @on-select="handleMenuSelect">
         <div>
-          <MenuItem name="service">
+          <MenuItem name="service" to="/service">
             <Icon type="md-infinite"/>
             服务
-          </MenuItem>
-          <MenuItem name="perm">
-            <Icon type="ios-people"/>
-            权限
           </MenuItem>
           <MenuItem name="monitor">
             <Icon type="ios-stats"/>
@@ -19,7 +15,7 @@
             <Icon type="md-cloud-upload"/>
             部署
           </MenuItem>
-          <MenuItem name="resource">
+          <MenuItem name="resource" to="/resource">
             <Icon type="md-code-working"/>
             资源
           </MenuItem>
@@ -43,13 +39,13 @@
       </Menu>
     </Header>
 
-<!--    <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>-->
-<!--    <Chart :options="options" style="width: 1000px; height: 500px"></Chart>-->
-    <Content :style="{margin: '88px 20px 0', background: '#fff', minHeight: '500px'}">
+    <!--    <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>-->
+    <!--    <Chart :options="options" style="width: 1000px; height: 500px"></Chart>-->
+    <Content :style="{margin: '88px 20px 0', background: '#fff', minHeight: '1000px'}">
       <router-view></router-view>
     </Content>
 
-    <Footer :style="{textAlign: 'center'}">2021 &copy; eCloud @ahojcn@qq.com</Footer>
+    <Footer :style="{textAlign: 'center'}">2021 &copy; eCloud | ahojcn</Footer>
   </Layout>
 </template>
 

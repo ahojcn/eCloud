@@ -25,7 +25,7 @@ func SetupRouter() *gin.Engine {
 	})
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8081", "http://127.0.0.1:8081"}
+	config.AllowOrigins = []string{"http://localhost:8080", "http://127.0.0.1:8080"}
 	config.AllowCredentials = true
 	//config.AllowAllOrigins = true
 	Router.Use(cors.New(config))
@@ -43,6 +43,7 @@ func SetupRouter() *gin.Engine {
 	// 服务树
 	Router.POST("/tree", controller.CreateTreeNode)
 	Router.GET("/tree", controller.GetTreeNodes)
+	Router.POST("/user_tree", controller.CreateUserTree)
 
 	// 资源 -- 主机
 	Router.POST("/host", controller.CreateHost)

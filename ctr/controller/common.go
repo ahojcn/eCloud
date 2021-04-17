@@ -67,6 +67,10 @@ func (g *g) response(statusCode int, msg string, data interface{}) {
 	if ok {
 		data = removeTopStruct(errs.Translate(trans))
 	}
+	err, ok := data.(error)
+	if ok {
+		data = err.Error()
+	}
 
 	g.C.JSON(statusCode, responseData{
 		Code: statusCode,

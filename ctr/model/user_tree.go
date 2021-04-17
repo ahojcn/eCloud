@@ -15,7 +15,8 @@ type UserTree struct {
 }
 
 type UserTreeInfo struct {
-	Tree
+	*Tree
+	UserInfo   *UserInfo `json:"user_info"`
 	Rights     int       `json:"rights"`
 	RightMsg   string    `json:"right_msg"`
 	CreateTime time.Time `json:"create_time" xorm:"notnull created"`
@@ -24,8 +25,10 @@ type UserTreeInfo struct {
 
 func (ut UserTree) UserTree2UserTreeInfo() *UserTreeInfo {
 	t, _ := TreeOne(map[string]interface{}{"id": ut.TreeId})
+	u, _ := UserOne(map[string]interface{}{"id": ut.UserId})
 	return &UserTreeInfo{
-		Tree:       *t,
+		Tree:       t,
+		UserInfo:   u.User2UserInfo(),
 		Rights:     ut.Rights,
 		RightMsg:   ut.RightsMsg(),
 		CreateTime: ut.CreateTime,
@@ -77,4 +80,13 @@ func UserTreeList(cons map[string]interface{}) ([]UserTree, error) {
 		return nil, err
 	}
 	return uts, err
+}
+
+func UserTreeUpdate(id int64, ut *UserTree) error {
+	orm := GetMaster()
+	affected, err := orm.ID(id).Update(ut)
+	if affected == 0 {
+		return errors.New("update failed, affected = 0")
+	}
+	return err
 }

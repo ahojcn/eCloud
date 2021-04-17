@@ -2,6 +2,11 @@ import axios from 'axios'
 import qs from 'qs'
 import {LoadingBar, Notice} from 'view-design'
 
+Notice.config({
+    top: 100,
+    duration: 3
+})
+
 // axios 实例
 const service = axios.create({
     baseURL: 'http://127.0.0.1:10001/',

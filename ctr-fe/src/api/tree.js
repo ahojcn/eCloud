@@ -26,3 +26,12 @@ export function apiAddUserTree(data) {
         data
     })
 }
+
+// 删除用户的服务树节点权限
+export function apiDeleteUserTree(params) {
+    return request({
+        url: 'user_tree',
+        method: 'delete',
+        params: params
+    })
+}

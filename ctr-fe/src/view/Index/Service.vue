@@ -24,6 +24,7 @@
                     <p>创建时间：{{ tree_node_detail.user_tree_info.create_time }}</p>
                     <p>更新时间：{{ tree_node_detail.user_tree_info.update_time }}</p>
                     <p>其他信息：{{ tree_node_detail.user_tree_info.extra }}</p>
+                    <p>子节点：{{tree_node_detail.children.length}}</p>
                   </template>
                 </Alert>
               </Col>
@@ -36,10 +37,15 @@
                       <div slot="content">
                         <p>权限：{{ user_info.right_msg }}</p>
                         <p>邮箱：{{ user_info.user_info.email }}</p>
+                        <Button size="small" type="error"
+                                @click="handleDeleteUserTree(user_info)">删除
+                        </Button>
                       </div>
                     </Tooltip>
                     <AddUserTreeBtn v-if="tree_node_detail.user_tree_info.rights >= 6"
-                                    :tree_node="tree_node_detail.user_tree_info"></AddUserTreeBtn>
+                                    :tree_node="tree_node_detail.user_tree_info"
+                                    @onAddUserTreeSuccess="onAddUserTreeSuccess"
+                    ></AddUserTreeBtn>
                   </template>
                 </Alert>
               </Col>
@@ -55,7 +61,7 @@
 </template>
 
 <script>
-import {apiGetTreeInfo} from '@/api/tree'
+import {apiGetTreeInfo, apiDeleteUserTree} from '@/api/tree'
 import ServiceTree from "@/components/ServiceTree";
 import AddUserTreeBtn from "@/components/AddUserTreeBtn";
 import AddTreeNodeForm from "@/components/AddTreeNodeForm";
@@ -74,7 +80,25 @@ export default {
     },
     onTreeNodeAddSuccessful() {
       this.$refs.ServiceTree.refreshTree()
-    }
+    },
+    async handleDeleteUserTree(node) {
+      this.$Modal.confirm({
+        title: '请确认删除操作',
+        loading: true,
+        okText: '已确认',
+        onOk: () => {
+          apiDeleteUserTree({user_id: node.user_info.id, tree_id: node.id}).then(res => {
+            if (res.code === 200) {
+              this.$refs.ServiceTree.refreshTree()
+            }
+            this.$Modal.remove()
+          })
+        },
+      })
+    },
+    onAddUserTreeSuccess() {
+      this.$refs.ServiceTree.refreshTree()
+    },
   },
   computed: {},
   data() {

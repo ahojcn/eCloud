@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -76,7 +77,19 @@ func TreeUpdate(id int64, t *Tree) error {
 	orm := GetMaster()
 	affected, err := orm.ID(id).Update(t)
 	if affected == 0 {
-		return errors.New("update failed, affected = 0")
+		return fmt.Errorf("update failed, affected = 0")
 	}
 	return err
+}
+
+func TreeDelete(id int64, t *Tree) error {
+	orm := GetSlave()
+	affected, err := orm.ID(id).Delete(t)
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return fmt.Errorf("update failed, affected = 0")
+	}
+	return nil
 }

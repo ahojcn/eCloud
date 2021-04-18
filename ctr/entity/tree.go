@@ -30,3 +30,8 @@ type CreateUserTreeRequestData struct {
 	TreeId *int64 `json:"tree_id" binding:"required,gt=0" label:"节点id"`
 	Rights *int   `json:"rights" binding:"required,gt=-1,lt=7" label:"权限"`
 }
+
+type DeleteUserTreeRequestData struct {
+	UserId *int64 `form:"user_id" binding:"required,gt=0" label:"用户id"`
+	TreeId *int64 `form:"tree_id" binding:"required,gt=0" label:"节点id"`
+}

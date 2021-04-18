@@ -44,6 +44,7 @@ func SetupRouter() *gin.Engine {
 	Router.POST("/tree", controller.CreateTreeNode)
 	Router.GET("/tree", controller.GetTreeNodes)
 	Router.POST("/user_tree", controller.CreateUserTree)
+	Router.DELETE("/user_tree", controller.DeleteUserTree)
 
 	// 资源 -- 主机
 	Router.POST("/host", controller.CreateHost)

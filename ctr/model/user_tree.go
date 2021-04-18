@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -35,6 +36,16 @@ func (ut UserTree) UserTree2UserTreeInfo() *UserTreeInfo {
 		UpdateTime: ut.UpdateTime,
 	}
 }
+
+const (
+	PermNoAccess  = 0
+	PermReadOnly  = 1
+	PermWriteOnly = 2
+	PermReadWrite = 3
+	PermAdd       = 4
+	PermDelete    = 5
+	PermAdmin     = 6
+)
 
 // RightsMsg 返回 user_tree 中 rights 的文字描述
 func (ut UserTree) RightsMsg() string {
@@ -86,7 +97,19 @@ func UserTreeUpdate(id int64, ut *UserTree) error {
 	orm := GetMaster()
 	affected, err := orm.ID(id).Update(ut)
 	if affected == 0 {
-		return errors.New("update failed, affected = 0")
+		return fmt.Errorf("update failed, affected = 0")
 	}
 	return err
+}
+
+func UserTreeDelete(id int64, ut *UserTree) error {
+	orm := GetMaster()
+	affected, err := orm.ID(id).Delete(ut)
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return fmt.Errorf("update failed, affected = 0")
+	}
+	return nil
 }

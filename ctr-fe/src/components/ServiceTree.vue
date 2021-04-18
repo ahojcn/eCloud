@@ -6,7 +6,11 @@
       <Button type="text" icon="md-refresh" @click="refreshTree"></Button>
     </Divider>
     <Tree :data="tree" :render="renderContent" @on-select-change="onSelectChange"
-          @on-toggle-expand="onToggleExpend"></Tree>
+          @on-toggle-expand="onToggleExpend" @on-contextmenu="handleContextMenuSelected">
+      <template slot="contextMenu">
+        <DropdownItem @click.native="handleDeleteTreeNode" style="color: #ed4014">删除</DropdownItem>
+      </template>
+    </Tree>
   </Card>
 </template>
 
@@ -26,12 +30,13 @@ export default {
         "0": {title: "C", color: "#00a2ae"}
       },
       search_tree_input: '',
+      context_data: null,  // 右键菜单选中的数据
     }
   },
   watch: {
     search_tree_input(val) {
       this.searchTreeAndSelect(this.tree, val)
-    }
+    },
   },
   mounted() {
     this.refreshTree()
@@ -42,14 +47,16 @@ export default {
         if (res.code === 200) {
           this.tree = res.data
           if (this.tree.length !== 0) {
-            this.tree[0].expand = true
+            this.$set(this.tree[0], 'expand', true)
+            this.$set(this.tree[0], 'selected', true)
             this.onToggleExpend(this.tree[0])
           }
         }
       })
     },
     renderContent(h, {root, node, data}) {
-      root, node
+      root
+      this.$set(node.node, 'contextmenu', true)
       return h('span', {
         style: {
           display: 'inline-block',
@@ -71,6 +78,7 @@ export default {
       this.$emit('onTreeNodeSelected', current_node)
     },
     onToggleExpend(current_node) {
+      this.$set(current_node, 'selected', true)
       this.$emit('onToggleExpend', current_node)
     },
     searchTreeAndSelect(tree_node, val) {
@@ -97,6 +105,13 @@ export default {
         }
       }
     },
+    handleDeleteTreeNode() {
+      // todo 删除节点
+      console.log(this.context_data)
+    },
+    handleContextMenuSelected(data) {
+      this.context_data = data
+    }
   }
 }
 </script>

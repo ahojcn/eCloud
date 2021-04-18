@@ -52,7 +52,7 @@ func GetTreeNodes(c *gin.Context) {
 			g.response(http.StatusInternalServerError, "服务器错误", err)
 			return
 		}
-		g.response(http.StatusOK, "ok", treeNodeDetail)
+		g.response(http.StatusOK, "获取节点信息完成", treeNodeDetail)
 		return
 	} else if rd.Name != nil {
 		treeList, err := service.GetTreeNodeInfoByName(*rd.Name, user)
@@ -60,7 +60,7 @@ func GetTreeNodes(c *gin.Context) {
 			g.response(http.StatusInternalServerError, "服务器错误", err)
 			return
 		}
-		g.response(http.StatusOK, "ok", treeList)
+		g.response(http.StatusOK, "查询完成", treeList)
 		return
 	}
 
@@ -70,7 +70,7 @@ func GetTreeNodes(c *gin.Context) {
 		return
 	}
 
-	g.response(http.StatusOK, "ok", rdata)
+	g.response(http.StatusOK, "获取服务树信息完成", rdata)
 	return
 }
 
@@ -96,5 +96,28 @@ func CreateUserTree(c *gin.Context) {
 		return
 	}
 
-	g.response(http.StatusOK, "ok", nil)
+	g.response(http.StatusOK, "已创建", nil)
+}
+
+// DeleteUserTree 删除用户节点权限
+func DeleteUserTree(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	rd := new(entity.DeleteUserTreeRequestData)
+	if err = c.ShouldBindQuery(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	if err = service.DeleteUserTree(user, rd); err != nil {
+		g.response(http.StatusUnauthorized, "权限错误", err)
+		return
+	}
+
+	g.response(http.StatusOK, "已删除", nil)
 }

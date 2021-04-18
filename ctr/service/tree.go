@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// CreateTreeWithUser 用户创建树
 func CreateTreeWithUser(user *model.User, data entity.CreateTreeNodeRequestData) error {
 	// 判断用户是否有这个 parent_id 节点的新增权限（4）
 	if *data.ParentId != 0 {
@@ -55,7 +56,8 @@ func CreateTreeWithUser(user *model.User, data entity.CreateTreeNodeRequestData)
 	}
 	err = model.UserTreeAdd(ut)
 	if err != nil {
-		// todo 删除上面创建的 tree
+		// 删除上面创建的树节点
+		_ = model.TreeDelete(tree.Id, tree)
 		return fmt.Errorf("创建失败")
 	}
 
@@ -189,4 +191,25 @@ func AddUserTree(user *model.User, userId, treeId int64, rights int) error {
 	}
 
 	return nil
+}
+
+// DeleteUserTree 删除一个用户的节点权限
+func DeleteUserTree(user *model.User, rd *entity.DeleteUserTreeRequestData) error {
+	if user.Id == *rd.UserId {
+		return fmt.Errorf("无权限删除自己")
+	}
+
+	ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": *rd.TreeId})
+	if !has {
+		return fmt.Errorf("没有权限删除")
+	}
+	if ut.Rights != model.PermAdmin {
+		return fmt.Errorf("没有权限删除")
+	}
+
+	ut, has = model.UserTreeOne(map[string]interface{}{"user_id": *rd.UserId, "tree_id": *rd.TreeId})
+	if !has {
+		return nil
+	}
+	return model.UserTreeDelete(ut.Id, ut)
 }

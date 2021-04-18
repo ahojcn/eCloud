@@ -40,7 +40,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	g.response(http.StatusOK, "ok", user.User2UserInfo())
+	g.response(http.StatusOK, "注册成功", user.User2UserInfo())
 }
 
 // GetUserInfoById 获取用户信息
@@ -65,7 +65,7 @@ func GetUserInfoById(c *gin.Context) {
 		return
 	}
 
-	g.response(http.StatusOK, "ok", user.User2UserInfo())
+	g.response(http.StatusOK, "获取用户信息完成", user.User2UserInfo())
 }
 
 // GetUsersInfoByUsername 根据 username 模糊查询用户信息
@@ -90,7 +90,7 @@ func GetUsersInfoByUsername(c *gin.Context) {
 		return
 	}
 
-	g.response(http.StatusOK, "ok", users)
+	g.response(http.StatusOK, "查询用户信息完成", users)
 	return
 }
 

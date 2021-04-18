@@ -19,6 +19,9 @@
             </Option>
           </Select>
         </FormItem>
+        <FormItem>
+          <Alert type="error">权限具有继承关系，请谨慎操作！</Alert>
+        </FormItem>
       </Form>
 
       <div slot="footer">
@@ -49,6 +52,7 @@ export default {
       apiAddUserTree(this.form).then(res => {
         if (res.code === 200) {
           this.show_form_modal = false
+          this.$emit('onAddUserTreeSuccess')
         }
       })
     },

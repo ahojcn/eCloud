@@ -10,14 +10,11 @@ import (
 
 func CreateHost(c *gin.Context) {
 	g := newGin(c)
-	//user, err := g.loginRequired()
-	//if err != nil {
-	//	g.response(http.StatusUnauthorized, "未登录", err)
-	//	return
-	//}
-	var err error
-	username := "ahojcn"
-	user, _ := model.UserOne(map[string]interface{}{"username": username})
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
 
 	// 检查参数
 	rd := entity.CreateHostRequestData{}

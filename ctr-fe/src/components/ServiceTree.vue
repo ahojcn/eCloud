@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {apiGetTreeInfo} from '@/api/tree'
+import {apiGetTreeInfo, apiDeleteTree} from '@/api/tree'
 
 export default {
   name: "ServiceTree",
@@ -70,7 +70,12 @@ export default {
             marginRight: "10px"
           }
         }, this.tree_node_type[data.type].title),
-        h('span', {}, data.name)
+        h('span', {
+          style: {
+            textDecoration: data.is_deleted === true ? 'line-through' : '',
+            color: data.is_deleted === true ? 'gray' : ''
+          }
+        }, data.name + (data.is_deleted === true ? '（已删除）' : '')),
       ])
     },
     onSelectChange(nodes, current_node) {
@@ -78,7 +83,6 @@ export default {
       this.$emit('onTreeNodeSelected', current_node)
     },
     onToggleExpend(current_node) {
-      this.$set(current_node, 'selected', true)
       this.$emit('onToggleExpend', current_node)
     },
     searchTreeAndSelect(tree_node, val) {
@@ -105,9 +109,19 @@ export default {
         }
       }
     },
-    handleDeleteTreeNode() {
-      // todo 删除节点
-      console.log(this.context_data)
+    async handleDeleteTreeNode() {
+      this.$Modal.confirm({
+        title: '请确认操作',
+        loading: true,
+        onOk: () => {
+          apiDeleteTree({tree_id: this.context_data.id}).then(res => {
+            if (res.code === 200) {
+              this.refreshTree()
+            }
+            this.$Modal.remove()
+          })
+        }
+      })
     },
     handleContextMenuSelected(data) {
       this.context_data = data

@@ -16,6 +16,7 @@ type Tree struct {
 	CreateTime  time.Time `json:"create_time" xorm:"notnull created"`
 	UpdateTime  time.Time `json:"update_time" xorm:"notnull updated"`
 	Extra       string    `json:"extra" xorm:"varchar(1024) notnull default '{}'"`
+	IsDeleted   bool      `json:"is_deleted" xorm:"default false"`
 }
 
 // TypeMsg 获取 tree 中 type 的文字描述
@@ -85,6 +86,19 @@ func TreeUpdate(id int64, t *Tree) error {
 func TreeDelete(id int64, t *Tree) error {
 	orm := GetSlave()
 	affected, err := orm.ID(id).Delete(t)
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return fmt.Errorf("update failed, affected = 0")
+	}
+	return nil
+}
+
+func TreeMarkDelete(t *Tree) error {
+	orm := GetMaster()
+	t.IsDeleted = true
+	affected, err := orm.ID(t.Id).Cols("is_deleted").Update(t)
 	if err != nil {
 		return err
 	}

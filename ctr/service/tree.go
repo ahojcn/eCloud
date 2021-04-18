@@ -213,3 +213,20 @@ func DeleteUserTree(user *model.User, rd *entity.DeleteUserTreeRequestData) erro
 	}
 	return model.UserTreeDelete(ut.Id, ut)
 }
+
+// DeleteTreeNode 标记删除一个节点
+func DeleteTreeNode(user *model.User, rd *entity.DeleteTreeNodeRequestData) error {
+	ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": *rd.TreeId})
+	if !has {
+		return fmt.Errorf("没有这个节点")
+	}
+	if ut.Rights < model.PermDelete || ut.Rights > model.PermAdmin {
+		return fmt.Errorf("无权限删除")
+	}
+
+	t, has := model.TreeOne(map[string]interface{}{"id": *rd.TreeId})
+	if !has {
+		return fmt.Errorf("没有节点信息")
+	}
+	return model.TreeMarkDelete(t)
+}

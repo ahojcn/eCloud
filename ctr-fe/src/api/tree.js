@@ -18,6 +18,15 @@ export function apiAddTreeNode(data) {
     })
 }
 
+// 标记删除节点
+export function apiDeleteTree(params) {
+    return request({
+        url: 'tree',
+        method: 'delete',
+        params: params
+    })
+}
+
 // 给用户添加服务树节点权限
 export function apiAddUserTree(data) {
     return request({

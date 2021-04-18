@@ -74,6 +74,29 @@ func GetTreeNodes(c *gin.Context) {
 	return
 }
 
+// DeleteTreeNode 标记删除节点
+func DeleteTreeNode(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	rd := entity.DeleteTreeNodeRequestData{}
+	if err = c.ShouldBindQuery(&rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	if err = service.DeleteTreeNode(user, &rd); err != nil {
+		g.response(http.StatusBadRequest, "权限错误", err)
+		return
+	}
+
+	g.response(http.StatusOK, "删除成功", nil)
+}
+
 // CreateUserTree 给用户添加权限
 func CreateUserTree(c *gin.Context) {
 	g := newGin(c)

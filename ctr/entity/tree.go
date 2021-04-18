@@ -35,3 +35,7 @@ type DeleteUserTreeRequestData struct {
 	UserId *int64 `form:"user_id" binding:"required,gt=0" label:"用户id"`
 	TreeId *int64 `form:"tree_id" binding:"required,gt=0" label:"节点id"`
 }
+
+type DeleteTreeNodeRequestData struct {
+	TreeId *int64 `form:"tree_id" binding:"required,gt=0" label:"节点id"`
+}

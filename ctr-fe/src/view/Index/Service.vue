@@ -32,7 +32,7 @@
                 <Alert>
                   用户组信息：
                   <template slot="desc">
-                    <Tooltip v-for="(user_info, index) in tree_node_detail.users" :key="index">
+                    <Tooltip transfer v-for="(user_info, index) in tree_node_detail.users" :key="index">
                       <span>{{ user_info.user_info.username }},</span>
                       <div slot="content">
                         <p>权限：{{ user_info.right_msg }}</p>

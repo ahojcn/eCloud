@@ -14,15 +14,19 @@ VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)
 };
 
-export default new VueRouter({
+let router = new VueRouter({
     routes: [
         {
+            name: 'Login',
             path: "/login",
-            component: Login
+            component: Login,
+            meta: {title: '登录'},
         },
         {
+            name: 'Register',
             path: "/register",
-            component: Register
+            component: Register,
+            meta: {title: '注册'},
         },
         {
             path: "/",
@@ -31,14 +35,25 @@ export default new VueRouter({
             component: Index,
             children: [
                 {
+                    name: 'Service',
                     path: '/service',
                     component: IndexService,
+                    meta: {title: '服务'},
                 },
                 {
+                    name: 'Resource',
                     path: '/resource',
-                    component: IndexResource
+                    component: IndexResource,
+                    meta: {title: '资源'},
                 }
             ]
         }
     ]
 })
+
+router.beforeEach((to, from, next) => {
+    window.document.title = to.meta.title + ' | 一站式云平台';
+    next()
+})
+
+export default router;

@@ -1,9 +1,9 @@
 <template>
   <Layout>
-    <Header :style="{position: 'fixed', width: '100%', zIndex: 9999}">
+    <Header :style="{position: 'fixed', width: '100%', zIndex: 99}">
       <Menu :active-name="active_name" mode="horizontal" theme="dark" @on-select="handleMenuSelect">
         <div>
-          <MenuItem name="service" to="/service">
+          <MenuItem name="service" to="service">
             <Icon type="md-infinite"/>
             服务
           </MenuItem>
@@ -15,7 +15,7 @@
             <Icon type="md-cloud-upload"/>
             部署
           </MenuItem>
-          <MenuItem name="resource" to="/resource">
+          <MenuItem name="resource" to="resource">
             <Icon type="md-code-working"/>
             资源
           </MenuItem>
@@ -52,7 +52,7 @@
 <script>
 import {is_login, logout} from "@/api/session";
 // import Chart from "@/components/Chart";
-import {get_metrics_data} from "@/api/monitor"
+import {apiGetMetricsData} from "@/api/monitor"
 // import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
 
 export default {
@@ -60,67 +60,6 @@ export default {
   // components: {MonitorMetricsSelect, Chart, ServiceTree},
   data() {
     return {
-      options: {
-        title: {
-          text: '监控图'
-        },
-        dataZoom: [
-          {
-            id: 'dataZoomX',
-            type: 'slider',
-            xAxisIndex: [0],
-            filterMode: 'filter', // 设定为 'filter' 从而 X 的窗口变化会影响 Y 的范围。
-            start: 0,
-            end: 100
-          },
-          {
-            id: 'dataZoomY',
-            type: 'slider',
-            yAxisIndex: [0],
-            filterMode: 'filter',
-            start: 0,
-            end: 100
-          }
-        ],
-        toolbox: {
-          show: true,
-          showTitle: false, // 隐藏默认文字，否则两者位置会重叠
-          feature: {
-            saveAsImage: {
-              show: true,
-              title: 'Save As Image'
-            },
-            magicType: {
-              type: ['line', 'bar', 'stack', 'tiled']
-            },
-            dataView: {
-              show: true,
-              title: 'Data View'
-            },
-            dataZoom: {
-              show: true,
-              title: '缩放'
-            }
-          },
-        },
-        tooltip: {
-          show: true,
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-          },
-        },
-        legend: {
-          data: ['user', 'system']
-        },
-        xAxis: {
-          type: 'time',
-        },
-        yAxis: {
-          type: 'value',
-        },
-        series: []
-      }
     }
   },
   computed: {
@@ -159,7 +98,7 @@ export default {
       this.options.series.length = 0
       this.options.title.text = metric
       for (let i = 0; i < cols.length; i++) {
-        get_metrics_data({
+        apiGetMetricsData({
           "host_id": '12',
           "metrics": metric,
           "cols": cols[i]

@@ -1,5 +1,9 @@
 package entity
 
+type GetHostInfoRequestData struct {
+	Id *int64 `form:"id" binding:"omitempty,gt=0" label:"主机id"`
+}
+
 type CreateHostRequestData struct {
 	IP          string `json:"ip" binding:"required,ipv4" label:"ipv4地址"`
 	Username    string `json:"username" binding:"required,alphanum,min=1,max=128" label:"用户名"`
@@ -29,6 +33,6 @@ type CreateHostUserRequestData struct {
 }
 
 type DeleteHostUserRequestData struct {
-	HostId int64 `json:"host_id" binding:"required,gt=0" label:"主机id"`
-	UserId int64 `json:"user_id" binding:"required,gt=0" label:"用户id"`
+	HostId *int64 `form:"host_id" binding:"required,gt=0" label:"主机id"`
+	UserId *int64 `form:"user_id" binding:"required,gt=0" label:"用户id"`
 }

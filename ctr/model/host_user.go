@@ -13,6 +13,16 @@ type HostUser struct {
 	UpdateTime time.Time `json:"update_time" xorm:"notnull updated"`
 }
 
+func (hu *HostUser) GetHost() *Host {
+	h, _ := HostOne(map[string]interface{}{"id": hu.HostId})
+	return h
+}
+
+func (hu *HostUser) GetUser() *User {
+	u, _ := UserOne(map[string]interface{}{"id": hu.UserId})
+	return u
+}
+
 func HostUserAdd(hu *HostUser) error {
 	orm := GetMaster()
 	affected, err := orm.Insert(hu)

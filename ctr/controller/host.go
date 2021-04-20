@@ -8,6 +8,30 @@ import (
 	"net/http"
 )
 
+// GetHostInfo 获取主机列表接口
+func GetHostInfo(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	rd := new(entity.GetHostInfoRequestData)
+	if err = c.ShouldBindQuery(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	hil, err := service.GetHostInfoList(user, rd)
+	if err != nil {
+		g.response(http.StatusInternalServerError, "获取失败", err)
+		return
+	}
+
+	g.response(http.StatusOK, "获取主机信息完成", hil)
+}
+
 func CreateHost(c *gin.Context) {
 	g := newGin(c)
 	user, err := g.loginRequired()
@@ -24,27 +48,12 @@ func CreateHost(c *gin.Context) {
 		return
 	}
 
-	host := model.Host{
-		UserId:      user.Id,
-		Description: rd.Description,
-		IP:          rd.IP,
-		Username:    rd.Username,
-		Password:    rd.Password,
-		Port:        rd.Port,
-	}
-	err = model.HostAdd(&host)
-	if err != nil {
-		g.response(http.StatusInternalServerError, "添加主机信息失败", err)
+	if err = service.CreateHost(user, &rd); err != nil {
+		g.response(http.StatusInternalServerError, "服务器错误", err)
 		return
 	}
 
-	res, err := service.DeployAgent(host)
-	if err != nil {
-		g.response(http.StatusInternalServerError, "部署失败", append(res, err.Error()))
-		return
-	}
-
-	g.response(http.StatusOK, "添加成功 && 部署 agent 成功", res)
+	g.response(http.StatusOK, "添加成功 && 部署 agent 成功", nil)
 }
 
 func UpdateHost(c *gin.Context) {
@@ -101,7 +110,7 @@ func DeleteHost(c *gin.Context) {
 
 	// 判断这个用户是否是管理员
 	if user.Id != host.UserId {
-		g.response(http.StatusUnauthorized, "权限不足", nil)
+		g.response(http.StatusUnauthorized, "权限不足，仅管理员可删除", nil)
 		return
 	}
 
@@ -180,36 +189,13 @@ func DeleteHostUser(c *gin.Context) {
 	}
 
 	rd := new(entity.DeleteHostUserRequestData)
-	if err = c.ShouldBindJSON(rd); err != nil {
+	if err = c.ShouldBindQuery(rd); err != nil {
 		g.response(http.StatusBadRequest, "参数错误", err)
 		return
 	}
 
-	if rd.UserId == user.Id {
-		g.response(http.StatusOK, "请先删除主机", nil)
-		return
-	}
-
-	_, h1 := model.UserOne(map[string]interface{}{"id": rd.UserId})
-	host, h2 := model.HostOne(map[string]interface{}{"id": rd.HostId})
-	if !h1 || !h2 {
-		g.response(http.StatusBadRequest, "参数错误，用户||主机不存在", map[string]bool{
-			"user": h1,
-			"host": h2,
-		})
-		return
-	}
-
-	// 判断这个用户是否是管理员
-	if user.Id != host.UserId {
-		g.response(http.StatusUnauthorized, "权限不足", nil)
-		return
-	}
-
-	hu := new(model.HostUser)
-	hu.HostId, hu.UserId = rd.HostId, rd.UserId
-	if err = model.HostUserDelete(hu); err != nil {
-		g.response(http.StatusInternalServerError, "删除失败", err)
+	if status, err := service.DeleteHostUser(user, rd); err != nil {
+		g.response(status, err.Error(), nil)
 		return
 	}
 

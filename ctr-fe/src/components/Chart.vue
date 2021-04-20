@@ -22,13 +22,15 @@ export default {
     }
   },
   mounted() {
-    this.chart = echarts.init(document.getElementById('container'), "light", {useDirtyRect: true})
+    this.chart = echarts.init(document.getElementById('container'), "light")
     this.chart.setOption(this.$props.options)
+    this.chart.resize()
   },
   watch: {
     options: {
       handler(newOptions) {
         this.chart.clear()
+        this.chart.resize()
         setTimeout(this.chart.setOption(newOptions), 500)
       },
       deep: true

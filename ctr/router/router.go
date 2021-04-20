@@ -48,6 +48,7 @@ func SetupRouter() *gin.Engine {
 	Router.DELETE("/user_tree", controller.DeleteUserTree)
 
 	// 资源 -- 主机
+	Router.GET("/host", controller.GetHostInfo)
 	Router.POST("/host", controller.CreateHost)
 	Router.PUT("/host", controller.UpdateHost)
 	Router.DELETE("/host/:id", controller.DeleteHost)

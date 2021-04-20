@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import {LoadingBar, Notice} from 'view-design'
+import {LoadingBar, Notice, Modal} from 'view-design'
 
 Notice.config({
     top: 100,
@@ -22,11 +22,12 @@ service.interceptors.request.use(
         LoadingBar.start();
         // 默认 get 请求 query array 是 col[]=aaa&col[]=bbb
         // 引入 qs 插件转为 col=aaa&col=bbb
-        if(config.method === 'get') {
+        if (config.method === 'get') {
             config.paramsSerializer = function (params) {
                 return qs.stringify(params, {arrayFormat: 'repeat'})
             }
         }
+        config.timeout = 1000 * 60 // 60s
         return config;
     },
     err => {
@@ -39,7 +40,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     res => {
         LoadingBar.finish();
-
         Notice.success({
             title: res.data.msg
         })
@@ -47,13 +47,21 @@ service.interceptors.response.use(
     },
     err => {
         LoadingBar.error();
-
-        let data = err.response.data
-        Notice.error({
-            title: data.msg,
-            desc: JSON.stringify(data.data)
-        })
-        return data;
+        if (err && err.response) {
+            // 服务器返回的错误信息
+            let data = err.response.data
+            Modal.error({
+                title: data.msg,
+                content: JSON.stringify(data.data)
+            })
+            return data;
+        } else {
+            Modal.error({
+                title: '出错了！',
+                content: err
+            })
+            return err;
+        }
     }
 );
 

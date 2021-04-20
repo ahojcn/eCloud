@@ -19,6 +19,41 @@ type Host struct {
 	Extra       string    `json:"extra" xorm:"text notnull"`
 }
 
+type HostInfo struct {
+	Id          int64       `json:"id"`
+	CreateUser  *UserInfo   `json:"create_user"`
+	Description string      `json:"description"`
+	IP          string      `json:"ip"`
+	Username    string      `json:"username"`
+	Port        int         `json:"port"`
+	CreateTime  time.Time   `json:"create_time"`
+	UpdateTime  time.Time   `json:"update_time"`
+	Extra       string      `json:"extra"`
+	UserList    []*UserInfo `json:"user_list"`
+}
+
+func (h *Host) GetHostInfo() *HostInfo {
+	u, _ := UserOne(map[string]interface{}{"id": h.UserId})
+	hul, _ := HostUserList(map[string]interface{}{"host_id": h.Id})
+	ul := make([]*UserInfo, 0)
+	for _, hu := range hul {
+		ul = append(ul, hu.GetUser().User2UserInfo())
+	}
+
+	return &HostInfo{
+		Id:          h.Id,
+		CreateUser:  u.User2UserInfo(),
+		Description: h.Description,
+		IP:          h.IP,
+		Username:    h.Username,
+		Port:        h.Port,
+		CreateTime:  h.CreateTime,
+		UpdateTime:  h.UpdateTime,
+		Extra:       h.Extra,
+		UserList:    ul,
+	}
+}
+
 func (h *Host) RunCmd(cmd string, timeout time.Duration) (string, error) {
 	cli := &util.SSHClient{
 		IP:       h.IP,

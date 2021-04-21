@@ -29,14 +29,19 @@ func MonitorMetricsWrite(hostId int64, metrics string, data map[string]interface
 	_ = cli.Write(bp)
 }
 
-func MonitorMetricsQuery(hostId int64, metrics string, cols []string) (res []client.Result, err error) {
+func MonitorMetricsQuery(hostId int64, metrics string, cols []string, fromTime, toTime string) (res []client.Result, err error) {
 	cli := model.GetInfluxDB()
 	ss := []string{}
 	for _, s := range cols {
 		ss = append(ss, fmt.Sprintf("\"%s\"", s))
 	}
 	fmt.Println(ss, cols)
-	cmd := fmt.Sprintf(`select %s from %s where host_id='%s'`, strings.Join(ss, ","), getTableNameByMetrics(metrics), strconv.FormatInt(hostId, 10))
+	cmd := fmt.Sprintf(`select %s from %s where host_id='%s' and time >= '%s' and time <= '%s'`,
+		strings.Join(ss, ","),
+		getTableNameByMetrics(metrics),
+		strconv.FormatInt(hostId, 10),
+		fromTime, toTime,
+	)
 	fmt.Println(cmd)
 
 	q := client.Query{

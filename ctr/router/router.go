@@ -54,6 +54,7 @@ func SetupRouter() *gin.Engine {
 	Router.DELETE("/host/:id", controller.DeleteHost)
 	Router.POST("/host_user", controller.CreateHostUser)
 	Router.DELETE("/host_user", controller.DeleteHostUser)
+	Router.POST("/command", controller.RunCommand)
 
 	// 监控
 	Router.POST("/metrics", controller.MonitorWriteMetrics)

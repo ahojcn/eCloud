@@ -1,6 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
-import {LoadingBar, Notice, Modal} from 'view-design'
+import {LoadingBar, Notice} from 'view-design'
 
 Notice.config({
     top: 100,
@@ -50,15 +50,17 @@ service.interceptors.response.use(
         if (err && err.response) {
             // 服务器返回的错误信息
             let data = err.response.data
-            Modal.error({
+            Notice.error({
                 title: data.msg,
-                content: JSON.stringify(data.data)
+                desc: JSON.stringify(data.data),
+                duration: 0
             })
             return data;
         } else {
-            Modal.error({
+            Notice.error({
                 title: '出错了！',
-                content: err
+                desc: err,
+                duration: 0
             })
             return err;
         }

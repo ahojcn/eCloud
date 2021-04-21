@@ -3,16 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/ahojcn/ecloud/ctr/model"
-	"strings"
 	"time"
 )
 
 func main() {
-	h, _ := model.HostOne(map[string]interface{}{"id": 7})
-	res, _ := h.RunCmd("docker images", time.Second * 60)
-	sa := strings.Split(res, "\n")[1:]
-	sa = sa[:len(sa) - 1]
-	for _, s := range sa {
-		fmt.Println(s, "---")
-	}
+	h, _ := model.HostOne(map[string]interface{}{"id": 13})
+	res, _ := h.RunCmd("cd /root/.eCloud && kill -9 `cat agent.pid`", time.Second * 60)
+	fmt.Println(res)
 }

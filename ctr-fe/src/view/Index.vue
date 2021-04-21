@@ -38,26 +38,17 @@
         </div>
       </Menu>
     </Header>
-
-    <!--    <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>-->
-    <!--    <Chart :options="options" style="width: 1000px; height: 500px"></Chart>-->
-    <Content :style="{margin: '88px 20px 0', background: '#fff', minHeight: '1000px'}">
+    <Content :style="{margin: '88px 20px 0', background: '#fff'}">
       <router-view></router-view>
     </Content>
-
-    <Footer :style="{textAlign: 'center'}">2021 &copy; eCloud | ahojcn</Footer>
   </Layout>
 </template>
 
 <script>
 import {is_login, logout} from "@/api/session";
-// import Chart from "@/components/Chart";
-import {apiGetMetricsData} from "@/api/monitor"
-// import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
 
 export default {
   name: "Index",
-  // components: {MonitorMetricsSelect, Chart, ServiceTree},
   data() {
     return {
     }
@@ -92,21 +83,6 @@ export default {
         }
       })
     },
-
-    onMonitorMetricsSelected(metric, cols) {
-      this.options.legend.data = cols
-      this.options.series.length = 0
-      this.options.title.text = metric
-      for (let i = 0; i < cols.length; i++) {
-        apiGetMetricsData({
-          "host_id": '12',
-          "metrics": metric,
-          "cols": cols[i]
-        }).then(res => {
-          this.options.series.push({type: "line", name: cols[i], data: res.data[0].Series[0].values})
-        })
-      }
-    }
   }
 }
 </script>

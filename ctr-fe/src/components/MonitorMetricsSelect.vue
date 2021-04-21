@@ -12,7 +12,7 @@
 
       <div>
         <DatePicker type="datetimerange" placeholder="选择时间段"
-                    style="width: 300px"></DatePicker>
+                    style="width: 400px" v-model="datetime"></DatePicker>
         <Button type="primary" @click="onClickBtnGet">GET！</Button>
       </div>
     </div>
@@ -49,6 +49,7 @@ export default {
         ]
       },
       cols_selected: [],
+      datetime: [new Date('2021-04-14T10:32:00+08:00'), new Date('2021-04-14T10:33:00+08:00')],
     }
   },
   methods: {
@@ -58,7 +59,7 @@ export default {
     },
     onClickBtnGet() {
       if (this.metrics_selected !== '' && this.cols_selected.length !== 0) {
-        this.$emit('onMonitorMetricsSelected', this.metrics_selected, this.cols_selected)
+        this.$emit('onMonitorMetricsSelected', this.metrics_selected, this.cols_selected, this.datetime[0], this.datetime[1])
       } else {
         this.$Notice.warning({
           title: '请选一个指标'

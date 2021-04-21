@@ -1,5 +1,7 @@
 <template>
   <div>
+    <HostAddModal style="text-align: right" @onAddHostOk="refreshHostList"></HostAddModal>
+
     <Table :loading="host_list_loading" stripe :columns="host_list_columns" :data="host_list">
       <template slot-scope="{ row }" slot="name">
         {{ row.username }}@{{ row.ip }}:{{ row.port }}
@@ -28,9 +30,10 @@
             <p>邮箱：{{ user.email }}</p>
             <p>手机：{{ user.phone }}</p>
             <p>状态：{{ user.is_active }}</p>
-            <Button type="error" size="small" @click="onHostUserDeleteBtnClick(row.id, user.id)">删除</Button>
+            <Button type="error" size="small" @click="onHostUserDeleteBtnClick(row, user)">删除</Button>
           </div>
         </Tooltip>
+        <Button type="primary" ghost size="small" icon="md-add" @click="onHostUserAddBtnClick(row)"></Button>
       </template>
       <template slot-scope="{row}" slot="extra">
         <ButtonGroup>
@@ -41,7 +44,7 @@
       </template>
     </Table>
 
-    <Modal transfer draggable scrollable v-model="show_host_extra_modal">
+    <Modal transfer footer-hide v-model="show_host_extra_modal">
       <div v-if="show_host_extra_modal">
         <strong>{{ host_info.username + '@' + host_info.ip + ':' + host_info.port }}</strong>
         <table>
@@ -85,26 +88,60 @@
       </div>
     </Modal>
 
-    <Drawer v-model="show_monitor_drawer" width="95" scrollable mask :title="host_info.ip">
+    <Drawer v-model="show_monitor_drawer" width="100" scrollable mask :title="'监控信息 - ' + host_info.ip">
       <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>
       <Chart :options="monitor_options"></Chart>
     </Drawer>
+
+    <Modal transfer v-model="show_host_user_add_modal" title="给用户添加权限">
+      <Form :label-width="80">
+        <FormItem label="主机">
+          {{ host_info.ip }}
+        </FormItem>
+        <FormItem label="用户">
+          <SelectUserByUsernameOrEmail @onChange="onHostUserAddUserChange"></SelectUserByUsernameOrEmail>
+        </FormItem>
+        <FormItem label="注意">
+          <Alert type="error">添加后此用户可查看主机相关资源 <br/> 可部署服务在此主机上</Alert>
+        </FormItem>
+      </Form>
+
+      <div slot="footer">
+        <Button type="primary" long @click="onHostUserAddModalBtnClick">添加</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
-import {apiGetHostList, apiDeleteHost, apiDeleteHostUser} from "@/api/host";
+import {apiGetHostList, apiDeleteHost, apiDeleteHostUser, apiAddHostUser} from "@/api/host";
 import {apiGetMetricsData} from "@/api/monitor";
+import VueShell from 'vue-shell';
 import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
 import Chart from "@/components/Chart";
+import SelectUserByUsernameOrEmail from "@/components/SelectUserByUsernameOrEmail";
+import RunCommand from '@/components/RunCommand';
+import HostAddModal from "@/components/HostAddModal";
 
 export default {
   name: "Resource",
-  components: {Chart, MonitorMetricsSelect},
+  // eslint-disable-next-line vue/no-unused-components
+  components: {HostAddModal, SelectUserByUsernameOrEmail, Chart, MonitorMetricsSelect, VueShell, RunCommand},
   props: {},
   data() {
     return {
       host_list_columns: [
+        {
+          type: 'expand',
+          width: 50,
+          render: (h, params) =>{
+            return h(RunCommand, {
+              props: {
+                host_info: params.row
+              }
+            })
+          }
+        },
         {title: 'id', key: 'id'},
         {title: 'name', slot: 'name'},
         {title: '时间', slot: 'time'},
@@ -174,12 +211,21 @@ export default {
         },
         xAxis: {
           type: 'time',
+          splitLine: {
+            show: false
+          },
         },
         yAxis: {
           type: 'value',
+          boundaryGap: [0, '100%'],
+          splitLine: {
+            show: false
+          }
         },
-        series: []
-      }
+        series: [],
+      },
+      show_host_user_add_modal: false,
+      host_user_add_user_id: -1,
     }
   },
   methods: {
@@ -192,14 +238,16 @@ export default {
       this.show_monitor_drawer = true
       this.host_info = host_info
     },
-    onMonitorMetricsSelected(metrics, cols) {
+    onMonitorMetricsSelected(metrics, cols, from_time, to_time) {
       this.monitor_options.series.length = 0
       this.monitor_options.title.text = metrics + '(' + cols + ')'
       for (let i = 0; i < cols.length; i++) {
         apiGetMetricsData({
           "host_id": this.host_info.id,
           "metrics": metrics,
-          "cols": cols[i]
+          "cols": cols[i],
+          "from_time": from_time,
+          "to_time": to_time
         }).then(res => {
           this.monitor_options.series.push({type: "line", name: cols[i], data: res.data[0].Series[0].values})
           this.monitor_options.legend.data.push(cols[i])
@@ -230,10 +278,40 @@ export default {
         }
       })
     },
-    onHostUserDeleteBtnClick(host_id, user_id) {
-      console.log(host_id, user_id)
-      apiDeleteHostUser({host_id: host_id, user_id: user_id}).then(res => {
-        console.log(res)
+    onHostUserDeleteBtnClick(host_info, user_info) {
+      this.$Modal.confirm({
+        title: '请确认',
+        content: `是否删除用户
+            <span style="color: red">${user_info.username}</span>
+            在主机（<span style="color: red">${host_info.ip} | ${host_info.description}</span>）的权限？`,
+        onOk: () => {
+          apiDeleteHostUser({host_id: host_info.id, user_id: user_info.id}).then(res => {
+            if (res.code === 200) {
+              this.refreshHostList()
+            }
+          })
+        },
+        onCancel: () => {
+          this.$Message.info('已取消')
+        }
+      })
+    },
+    onHostUserAddBtnClick(host_info) {
+      this.host_info = host_info
+      this.show_host_user_add_modal = true
+    },
+    onHostUserAddUserChange(user_id) {
+      this.host_user_add_user_id = user_id
+    },
+    onHostUserAddModalBtnClick() {
+      apiAddHostUser({
+        host_id: this.host_info.id,
+        user_id: this.host_user_add_user_id
+      }).then(res => {
+        if (res.code === 200) {
+          this.refreshHostList()
+          this.show_host_user_add_modal = false
+        }
       })
     },
   },

@@ -36,3 +36,8 @@ type DeleteHostUserRequestData struct {
 	HostId *int64 `form:"host_id" binding:"required,gt=0" label:"主机id"`
 	UserId *int64 `form:"user_id" binding:"required,gt=0" label:"用户id"`
 }
+
+type RunCommandRequestData struct {
+	HostId *int64  `json:"host_id" binding:"required,gt=0" label:"主机id"`
+	Cmd    *string `json:"cmd" binding:"required,min=0" label:"命令"`
+}

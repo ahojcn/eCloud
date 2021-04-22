@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HostAddModal style="text-align: right" @onAddHostOk="refreshHostList"></HostAddModal>
+    <AddHostModal style="text-align: right" @onAddHostOk="refreshHostList"></AddHostModal>
 
     <Table :loading="host_list_loading" stripe :columns="host_list_columns" :data="host_list">
       <template slot-scope="{ row }" slot="name">
@@ -121,12 +121,12 @@ import MonitorMetricsSelect from "@/components/MonitorMetricsSelect";
 import Chart from "@/components/Chart";
 import SelectUserByUsernameOrEmail from "@/components/SelectUserByUsernameOrEmail";
 import RunCommand from '@/components/RunCommand';
-import HostAddModal from "@/components/HostAddModal";
+import AddHostModal from "@/components/AddHostModal";
 
 export default {
   name: "Resource",
   // eslint-disable-next-line vue/no-unused-components
-  components: {HostAddModal, SelectUserByUsernameOrEmail, Chart, MonitorMetricsSelect, VueShell, RunCommand},
+  components: {AddHostModal, SelectUserByUsernameOrEmail, Chart, MonitorMetricsSelect, VueShell, RunCommand},
   props: {},
   data() {
     return {

@@ -4,8 +4,9 @@ import VueRouter from 'vue-router'
 import Login from '@/view/Login'
 import Register from '@/view/Register'
 import Index from '@/view/Index'
-import IndexService from '@/view/Index/Service'
-import IndexResource from '@/view/Index/Resource'
+import Service from '@/view/Index/Service'
+import Resource from '@/view/Index/Resource'
+import ICode from "@/view/ICode";
 
 Vue.use(VueRouter);
 
@@ -37,17 +38,23 @@ let router = new VueRouter({
                 {
                     name: 'Service',
                     path: '/service',
-                    component: IndexService,
+                    component: Service,
                     meta: {title: '服务'},
                 },
                 {
                     name: 'Resource',
                     path: '/resource',
-                    component: IndexResource,
+                    component: Resource,
                     meta: {title: '资源'},
+                },
+                {
+                    name: "ICode",
+                    path: "/icode",
+                    component: ICode,
+                    meta: {title: '注册'},
                 }
             ]
-        }
+        },
     ]
 })
 

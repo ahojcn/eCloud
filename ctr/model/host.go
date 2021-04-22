@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"github.com/ahojcn/ecloud/ctr/util"
 	"time"
 )
@@ -62,6 +63,16 @@ func (h *Host) RunCmd(cmd string, timeout time.Duration) (string, error) {
 		Port:     h.Port,
 	}
 	return cli.RunCmd(cmd, timeout)
+}
+
+func (h *Host) GetUnusedPort() int {
+	for i := 10000; i < 60000; i++ {
+		_, err := h.RunCmd(fmt.Sprintf("lsof -i:%d", i), time.Second*10)
+		if err != nil {
+			return i
+		}
+	}
+	return 0
 }
 
 func HostAdd(host *Host) error {

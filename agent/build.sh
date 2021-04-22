@@ -16,7 +16,7 @@ CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ${BINPATH}${PREFIX}darwin-amd
 
 echo "go build done, push ${BINPATH} to gitee"
 
-cd ${BINPATH} && cp ../deploy.sh ./
+cd ${BINPATH} && cp ../deploy.sh ./ && cp ../icode.sh ./
 
 git status
 git add .

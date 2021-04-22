@@ -21,7 +21,7 @@ func main() {
 	// sync
 	err = engine.Sync(
 		new(model.Tree), new(model.User), new(model.UserTree),
-		new(model.HostUser), new(model.Host),
+		new(model.HostUser), new(model.Host), new(model.ICode),
 	)
 	if err != nil {
 		panic(err)

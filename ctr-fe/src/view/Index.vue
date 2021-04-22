@@ -19,10 +19,16 @@
             <Icon type="md-code-working"/>
             资源
           </MenuItem>
-          <MenuItem name="dev">
-            <Icon type="ios-bug"/>
-            开发
-          </MenuItem>
+          <Submenu name="dev">
+            <template slot="title">
+              <Icon type="ios-bug"/>
+              开发
+            </template>
+            <MenuGroup title="开发机">
+              <MenuItem name="create_icode" to="icode">申请开发机</MenuItem>
+              <MenuItem name="icode_list" to="icode">我的开发机</MenuItem>
+            </MenuGroup>
+          </Submenu>
         </div>
 
         <div style="margin-right: 12px;float: right">
@@ -38,7 +44,7 @@
         </div>
       </Menu>
     </Header>
-    <Content :style="{margin: '88px 20px 0', background: '#fff'}">
+    <Content :style="{margin: '88px 20px 0', height: '100vh', background: '#fff'}">
       <router-view></router-view>
     </Content>
   </Layout>
@@ -49,10 +55,6 @@ import {is_login, logout} from "@/api/session";
 
 export default {
   name: "Index",
-  data() {
-    return {
-    }
-  },
   computed: {
     user_info() {
       return this.$store.state.user_info
@@ -88,4 +90,33 @@ export default {
 </script>
 
 <style scoped>
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+.layout {
+  border: 1px solid #d7dde4;
+  background: #f5f7f9;
+  position: relative;
+  border-radius: 4px;
+  display: flex;
+}
+
+.layout-logo {
+  width: 100px;
+  height: 30px;
+  background: #5b6270;
+  border-radius: 3px;
+  float: left;
+  position: relative;
+  top: 15px;
+  left: 20px;
+}
+
+.layout-nav {
+  width: 420px;
+  margin: 0 auto;
+  margin-right: 20px;
+}
 </style>

@@ -136,7 +136,7 @@ func RunCommand(user *model.User, rd *entity.RunCommandRequestData) (int, string
 		return http.StatusUnauthorized, "", fmt.Errorf("没有权限")
 	}
 
-	result, err := hu.GetHost().RunCmd(*rd.Cmd, 60 * time.Second)
+	result, err := hu.GetHost().RunCmd(*rd.Cmd, 60*time.Second)
 	if err != nil {
 		return http.StatusInternalServerError, "", fmt.Errorf("服务器错误, err:%v", err)
 	}

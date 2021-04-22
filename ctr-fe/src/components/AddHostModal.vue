@@ -14,7 +14,7 @@
           <Input v-model="form.username" placeholder="登录用户名"></Input>
         </FormItem>
         <FormItem label="密码">
-          <Input v-model="form.password" placeholder="将会被加密存储"></Input>
+          <Input v-model="form.password" type="password" placeholder="将会被加密存储"></Input>
         </FormItem>
         <FormItem label="端口">
           <InputNumber v-model="form.port" :min="1" :max="65534" placeholder="ssh端口号"></InputNumber>
@@ -31,7 +31,7 @@
 import {apiAddHost} from '@/api/host';
 
 export default {
-  name: "HostAddModal",
+  name: "AddHostModal",
   data() {
     return {
       form: {

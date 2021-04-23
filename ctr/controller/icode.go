@@ -38,7 +38,13 @@ func GetICodeList(c *gin.Context) {
 		return
 	}
 
-	status, iCodes, err := service.GetICodeList(user)
+	rd := new(entity.GetICodeListRequestData)
+	if err = c.ShouldBindQuery(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	status, iCodes, err := service.GetICodeList(user, rd)
 	if err != nil {
 		g.response(status, "获取开发机列表失败", err)
 		return

@@ -54,12 +54,32 @@ func CreateICode(user *model.User, rd *entity.CreateICodeRequestData) (int, erro
 	return http.StatusOK, nil
 }
 
-func GetICodeList(user *model.User) (int, []model.ICode, error) {
-	iCodes, err := model.ICodeList(map[string]interface{}{"user_id": user.Id})
-	if err != nil {
-		return http.StatusInternalServerError, nil, err
+func GetICodeList(user *model.User, rd *entity.GetICodeListRequestData) (int, []entity.GetICodeListResponseData, error) {
+	var iCodes []model.ICode
+	var err error
+
+	if rd.Id != nil {
+		iCodes, err = model.ICodeList(map[string]interface{}{"id": *rd.Id})
+		if err != nil {
+			return http.StatusInternalServerError, nil, err
+		}
+	} else {
+		iCodes, err = model.ICodeList(map[string]interface{}{"user_id": user.Id})
+		if err != nil {
+			return http.StatusInternalServerError, nil, err
+		}
 	}
-	return http.StatusOK, iCodes, nil
+
+	res := make([]entity.GetICodeListResponseData, 0)
+	for _, iCode := range iCodes {
+		res = append(res, entity.GetICodeListResponseData{
+			ICode:    iCode,
+			UserInfo: iCode.GetUser().User2UserInfo(),
+			HostInfo: iCode.GetHost().GetHostInfo(),
+		})
+	}
+
+	return http.StatusOK, res, nil
 }
 
 func DeleteICode(user *model.User, rd *entity.DeleteICodeRequestData) (int, error) {
@@ -77,13 +97,14 @@ func DeleteICode(user *model.User, rd *entity.DeleteICodeRequestData) (int, erro
 	deployPath := util.Config.Section("agent").Key("deploy_path").String()
 
 	// 删除对应的 container
-	cmd := fmt.Sprintf("cd %v"+
+	cmd := fmt.Sprintf("cd %v &&"+
 		"docker rm -f %v &&"+
 		"cat i_code_ids | awk '{if ($1!=%v) print $1}' > i_code_ids_tmp &&"+
 		"mv i_code_ids_tmp i_code_ids -f &&"+
 		"rm -f i_code_ids_tmp",
 		deployPath, containerId, containerId,
 	)
+	fmt.Println(cmd)
 	_, err := iCode.GetHost().RunCmd(cmd, 0)
 	if err != nil {
 		return http.StatusInternalServerError, err

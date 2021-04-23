@@ -3,7 +3,7 @@
     <Header :style="{position: 'fixed', width: '100%', zIndex: 99}">
       <Menu :active-name="active_name" mode="horizontal" theme="dark" @on-select="handleMenuSelect">
         <div>
-          <MenuItem name="service" to="service">
+          <MenuItem name="service" to="/service">
             <Icon type="md-infinite"/>
             服务
           </MenuItem>
@@ -15,7 +15,7 @@
             <Icon type="md-cloud-upload"/>
             部署
           </MenuItem>
-          <MenuItem name="resource" to="resource">
+          <MenuItem name="resource" to="/resource">
             <Icon type="md-code-working"/>
             资源
           </MenuItem>
@@ -25,8 +25,8 @@
               开发
             </template>
             <MenuGroup title="开发机">
-              <MenuItem name="create_icode" to="icode">申请开发机</MenuItem>
-              <MenuItem name="icode_list" to="icode">我的开发机</MenuItem>
+              <MenuItem name="icode_list" to="/icode">我的开发机</MenuItem>
+              <MenuItem name="icdoe_create" to="/icode/create">申请开发机</MenuItem>
             </MenuGroup>
           </Submenu>
         </div>
@@ -93,30 +93,5 @@ export default {
 html,body {
   width: 100%;
   height: 100%;
-}
-
-.layout {
-  border: 1px solid #d7dde4;
-  background: #f5f7f9;
-  position: relative;
-  border-radius: 4px;
-  display: flex;
-}
-
-.layout-logo {
-  width: 100px;
-  height: 30px;
-  background: #5b6270;
-  border-radius: 3px;
-  float: left;
-  position: relative;
-  top: 15px;
-  left: 20px;
-}
-
-.layout-nav {
-  width: 420px;
-  margin: 0 auto;
-  margin-right: 20px;
 }
 </style>

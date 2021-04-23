@@ -6,7 +6,7 @@
                      @onToggleExpend="onTreeSelectedOrExpand"></ServiceTree>
       </Col>
       <Col span="20">
-        <Card v-if="show_tree_node_detail">
+        <Card v-if="show_tree_node_detail" shadow style="min-height: 100vh">
           <div slot="title">
             <Tag :color="$store.state.tree_node_type[tree_node_detail.user_tree_info.type].color">
               {{ $store.state.tree_node_type[tree_node_detail.user_tree_info.type].title }}

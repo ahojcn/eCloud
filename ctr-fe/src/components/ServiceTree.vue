@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <Card style="min-height: 100vh">
     <Input suffix="ios-search" v-model="search_tree_input"></Input>
     <Divider>
       服务树

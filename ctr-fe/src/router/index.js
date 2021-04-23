@@ -1,12 +1,14 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
-import Login from '@/view/Login'
-import Register from '@/view/Register'
-import Index from '@/view/Index'
-import Service from '@/view/Index/Service'
-import Resource from '@/view/Index/Resource'
+import Login from '@/view/Login';
+import Register from '@/view/Register';
+import Index from '@/view/Index';
+import Service from '@/view/Service';
+import Resource from '@/view/Resource';
 import ICode from "@/view/ICode";
+import ICodeDetail from "@/view/ICode/ICodeDetail";
+import ICodeCreate from "@/view/ICode/ICodeCreate";
 
 Vue.use(VueRouter);
 
@@ -52,6 +54,20 @@ let router = new VueRouter({
                     path: "/icode",
                     component: ICode,
                     meta: {title: '注册'},
+                    children: [
+                        {
+                            name: "ICodeCreate",
+                            path: "/icode/create",
+                            component: ICodeCreate,
+                            meta: {title: "创建开发机"}
+                        },
+                        {
+                            name: "ICodeDetail",
+                            path: "/icode/detail",
+                            component: ICodeDetail,
+                            meta: {title: "详细信息"}
+                        },
+                    ]
                 }
             ]
         },

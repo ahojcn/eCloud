@@ -3,10 +3,16 @@
     <Header :style="{position: 'fixed', width: '100%', zIndex: 99}">
       <Menu :active-name="active_name" mode="horizontal" theme="dark" @on-select="handleMenuSelect">
         <div>
-          <MenuItem name="service" to="/service">
-            <Icon type="md-infinite"/>
-            服务
-          </MenuItem>
+          <Submenu name="service">
+            <template slot="title">
+              <Icon type="md-infinite"/>
+              服务
+            </template>
+            <MenuGroup title="服务树">
+              <MenuItem name="service" to="/service">服务树信息</MenuItem>
+              <MenuItem name="service_create" to="/service/create">创建树节点</MenuItem>
+            </MenuGroup>
+          </Submenu>
           <MenuItem name="monitor">
             <Icon type="ios-stats"/>
             监控
@@ -90,7 +96,7 @@ export default {
 </script>
 
 <style scoped>
-html,body {
+html, body {
   width: 100%;
   height: 100%;
 }

@@ -5,6 +5,8 @@ import Login from '@/view/Login';
 import Register from '@/view/Register';
 import Index from '@/view/Index';
 import Service from '@/view/Service';
+import TreeNodeCreate from "@/view/Service/TreeNodeCreate";
+import TreeNodeDetail from "@/view/Service/TreeNodeDetail";
 import Resource from '@/view/Resource';
 import ICode from "@/view/ICode";
 import ICodeDetail from "@/view/ICode/ICodeDetail";
@@ -42,6 +44,20 @@ let router = new VueRouter({
                     path: '/service',
                     component: Service,
                     meta: {title: '服务'},
+                    children: [
+                        {
+                            name: 'TreeNodeCreate',
+                            path: '/service/create',
+                            component: TreeNodeCreate,
+                            meta: {title: '创建节点'}
+                        },
+                        {
+                            name: 'TreeNodeDetail',
+                            path: '/service/detail',
+                            component: TreeNodeDetail,
+                            meta: {title: '节点详情'}
+                        },
+                    ]
                 },
                 {
                     name: 'Resource',

@@ -49,6 +49,7 @@ export default {
           if (this.tree.length !== 0) {
             this.$set(this.tree[0], 'expand', true)
             this.$set(this.tree[0], 'selected', true)
+            this.$emit('onTreeNodeSelected', this.tree[0])
             this.onToggleExpend(this.tree[0])
           }
         }

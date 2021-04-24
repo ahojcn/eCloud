@@ -14,7 +14,7 @@
 
 <script>
 import Logo from "@/components/Logo";
-import {is_login, login} from "@/api/session"
+import {apiIsLogin, apiLogin} from "@/api/session"
 
 export default {
   name: "Login",
@@ -28,7 +28,7 @@ export default {
     }
   },
   mounted() {
-    is_login().then(res => {
+    apiIsLogin().then(res => {
       if (res.code === 200) {
         this.$router.push("/")
       }
@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     handleLoginClick() {
-      login(this.login_form).then(res => {
+      apiLogin(this.login_form).then(res => {
         if (res.code === 200) {
           this.$router.push("/")
         }

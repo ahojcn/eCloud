@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading">
+  <div v-if="!loading">
     <Row :gutter="18">
       <Col span="12">
         <Card shadow :title="icode_detail.name + ''" style="min-height: 100vh">
@@ -126,7 +126,7 @@ export default {
   data() {
     return {
       icode_detail: {},
-      loading: false
+      loading: true
     }
   },
   computed: {
@@ -147,7 +147,7 @@ export default {
       apiGetICodeList({id: id}).then(res => {
         if (res.code === 200) {
           this.icode_detail = res.data[0]
-          this.loading = true
+          this.loading = false
         }
       })
     },

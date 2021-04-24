@@ -1,6 +1,6 @@
 import request from '@/util/requests'
 
-// Shell 执行命令
+// 添加主机
 export function apiAddHost(data) {
     return request({
         url: 'host',

@@ -9,8 +9,14 @@
               服务
             </template>
             <MenuGroup title="服务树">
-              <MenuItem name="service" to="/service">服务树信息</MenuItem>
-              <MenuItem name="service_create" to="/service/create">创建树节点</MenuItem>
+              <MenuItem name="service" :to="{name:'Service'}">
+                <Icon type="md-apps"/>
+                服务树信息
+              </MenuItem>
+              <MenuItem name="service_create" :to="{name:'TreeNodeCreate'}">
+                <Icon type="md-add"/>
+                创建树节点
+              </MenuItem>
             </MenuGroup>
           </Submenu>
           <MenuItem name="monitor">
@@ -21,18 +27,44 @@
             <Icon type="md-cloud-upload"/>
             部署
           </MenuItem>
-          <MenuItem name="resource" to="/resource">
-            <Icon type="md-code-working"/>
-            资源
-          </MenuItem>
-          <Submenu name="dev">
+          <Submenu name="resource">
+            <template slot="title">
+              <Icon type="md-code-working"/>
+              资源
+            </template>
+            <MenuGroup title="主机">
+              <MenuItem name="HostDetail" :to="{name: 'HostDetail', query: {id: $route.query.id}}">
+                <Icon type="md-apps"/>
+                主机详情
+              </MenuItem>
+              <MenuItem name="HostAdd" :to="{name: 'HostAdd'}">
+                <Icon type="md-add"/>
+                添加主机
+              </MenuItem>
+              <MenuItem name="HostMonitor" :to="{name: 'HostMonitor', query: {id: $route.query.id}}">
+                <Icon type="md-trending-up"/>
+                主机监控
+              </MenuItem>
+              <MenuItem name="HostRunCmd" :to="{name: 'HostRunCmd', query: {id: $route.query.id}}">
+                <Icon type="md-code-working"/>
+                终端连接
+              </MenuItem>
+            </MenuGroup>
+          </Submenu>
+          <Submenu name="icode">
             <template slot="title">
               <Icon type="ios-bug"/>
               开发
             </template>
             <MenuGroup title="开发机">
-              <MenuItem name="icode_list" to="/icode">我的开发机</MenuItem>
-              <MenuItem name="icdoe_create" to="/icode/create">申请开发机</MenuItem>
+              <MenuItem name="icode_list" :to="{name:'ICode'}">
+                <Icon type="md-finger-print"/>
+                我的开发机
+              </MenuItem>
+              <MenuItem name="icdoe_create" :to="{name:'ICodeCreate'}">
+                <Icon type="md-add"/>
+                申请开发机
+              </MenuItem>
             </MenuGroup>
           </Submenu>
         </div>
@@ -57,7 +89,9 @@
 </template>
 
 <script>
-import {is_login, logout} from "@/api/session";
+import {setWaterMark} from '@/util/watermask';
+
+import {apiIsLogin, apiLogout} from "@/api/session";
 
 export default {
   name: "Index",
@@ -70,11 +104,12 @@ export default {
     },
   },
   mounted() {
-    is_login().then(res => {
+    apiIsLogin().then(res => {
       if (res.code !== 200) {
         this.$router.push("/login")
       }
       this.$store.commit('setUserInfo', res.data)
+      setWaterMark(res.data.username, res.data.email)
     })
   },
   methods: {
@@ -85,12 +120,26 @@ export default {
       }
     },
     handleClickLogout() {
-      logout().then(res => {
+      apiLogout().then(res => {
         if (res.code === 200) {
           this.$router.go(0)
         }
       })
     },
+  },
+  data() {
+    return {
+      live2dw: {
+        state: false,
+        cdnPath: "/",
+        type: "rem",
+        position: "right",
+        width: 250,
+        height: 500,
+        hOffset: 0,
+        vOffset: -110
+      },
+    }
   }
 }
 </script>

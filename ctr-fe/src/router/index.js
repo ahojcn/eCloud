@@ -4,10 +4,17 @@ import VueRouter from 'vue-router';
 import Login from '@/view/Login';
 import Register from '@/view/Register';
 import Index from '@/view/Index';
+
 import Service from '@/view/Service';
 import TreeNodeCreate from "@/view/Service/TreeNodeCreate";
 import TreeNodeDetail from "@/view/Service/TreeNodeDetail";
+
 import Resource from '@/view/Resource';
+import HostDetail from "@/view/Resource/HostDetail";
+import HostAdd from "@/view/Resource/HostAdd";
+import HostMonitor from "@/view/Resource/HostMonitor";
+import HostRunCmd from "@/view/Resource/HostRunCmd";
+
 import ICode from "@/view/ICode";
 import ICodeDetail from "@/view/ICode/ICodeDetail";
 import ICodeCreate from "@/view/ICode/ICodeCreate";
@@ -64,6 +71,32 @@ let router = new VueRouter({
                     path: '/resource',
                     component: Resource,
                     meta: {title: '资源'},
+                    children: [
+                        {
+                            name: 'HostDetail',
+                            path: '/resource/host/detail',
+                            component: HostDetail,
+                            meta: {title: '主机详情'}
+                        },
+                        {
+                            name: 'HostAdd',
+                            path: '/resource/host/add',
+                            component: HostAdd,
+                            meta: {title: '添加主机'}
+                        },
+                        {
+                            name: 'HostMonitor',
+                            path: '/resource/host/monitor',
+                            component: HostMonitor,
+                            meta: {title: '主机监控'}
+                        },
+                        {
+                            name: 'HostRunCmd',
+                            path: '/resource/host/cmd',
+                            component: HostRunCmd,
+                            meta: {title: '主机监控'}
+                        },
+                    ]
                 },
                 {
                     name: "ICode",
@@ -91,7 +124,7 @@ let router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    window.document.title = to.meta.title + ' | 一站式云平台';
+    window.document.title = to.meta.title + ' | 一站式云平台'
     next()
 })
 

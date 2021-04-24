@@ -1,7 +1,7 @@
 import request from '@/util/requests'
 
 // 登录
-export function login(data) {
+export function apiLogin(data) {
     return request({
         url: 'session',
         method: 'post',
@@ -10,7 +10,7 @@ export function login(data) {
 }
 
 // 登出
-export function logout() {
+export function apiLogout() {
     return request({
         url: 'session',
         method: 'delete',
@@ -18,7 +18,7 @@ export function logout() {
 }
 
 // 判断是否登录
-export function is_login() {
+export function apiIsLogin() {
     return request({
         url: 'session',
         method: 'get',

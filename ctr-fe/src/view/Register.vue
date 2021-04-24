@@ -18,7 +18,7 @@
 <script>
 import Logo from "@/components/Logo";
 import {register} from '@/api/user'
-import {is_login} from "@/api/session";
+import {apiIsLogin} from "@/api/session";
 
 export default {
   name: "Register",
@@ -34,7 +34,7 @@ export default {
     }
   },
   mounted() {
-    is_login().then(res => {
+    apiIsLogin().then(res => {
       if (res.code === 200) {
         this.$router.push("/")
       }

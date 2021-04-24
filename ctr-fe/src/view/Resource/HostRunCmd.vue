@@ -1,21 +1,23 @@
 <template>
-  <VueShell :banner="shell_banner" @shell_output="onRunCommand" :shell_input="send_to_terminal"></VueShell>
+  <div>
+    <VueShell v-if="!loading" :banner="shell_banner" @shell_output="onRunCommand"
+              :shell_input="send_to_terminal"></VueShell>
+  </div>
 </template>
 
 <script>
-import {apiRunCommand} from "@/api/host";
+import {apiGetHostList, apiRunCommand} from "@/api/host";
 
 import VueShell from 'vue-shell';
 
 export default {
-  name: "RunCommand",
+  name: "HostRunCmd",
   components: {VueShell},
-  props: {
-    host_info: Object
-  },
   data() {
     return {
+      host_info: {},
       send_to_terminal: '',
+      loading: true
     }
   },
   computed: {
@@ -37,7 +39,7 @@ export default {
           height: 200
         }
       }
-    }
+    },
   },
   methods: {
     onRunCommand(val) {
@@ -53,8 +55,19 @@ export default {
         }
         this.$Spin.hide()
       })
-    }
+    },
+    getHostInfo(id) {
+      apiGetHostList({"id": id}).then(res => {
+        if (res.code === 200) {
+          this.host_info = res.data[0]
+          this.loading = false
+        }
+      })
+    },
   },
+  mounted() {
+    this.getHostInfo({id: this.$route.query.id})
+  }
 }
 </script>
 

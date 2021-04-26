@@ -17,6 +17,7 @@ type Host struct {
 	Port        int       `json:"port" xorm:"notnull default 22"`
 	CreateTime  time.Time `json:"create_time" xorm:"notnull created"`
 	UpdateTime  time.Time `json:"update_time" xorm:"notnull updated"`
+	Router      bool      `json:"router" xorm:"notnull default false"`
 	Extra       string    `json:"extra" xorm:"text notnull"`
 }
 
@@ -29,6 +30,7 @@ type HostInfo struct {
 	Port        int         `json:"port"`
 	CreateTime  time.Time   `json:"create_time"`
 	UpdateTime  time.Time   `json:"update_time"`
+	Router      bool        `json:"router"`
 	Extra       string      `json:"extra"`
 	UserList    []*UserInfo `json:"user_list"`
 }
@@ -50,6 +52,7 @@ func (h *Host) GetHostInfo() *HostInfo {
 		Port:        h.Port,
 		CreateTime:  h.CreateTime,
 		UpdateTime:  h.UpdateTime,
+		Router:      h.Router,
 		Extra:       h.Extra,
 		UserList:    ul,
 	}

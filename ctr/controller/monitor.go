@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
@@ -37,4 +39,12 @@ func MonitorQueryMetrics(c *gin.Context) {
 	}
 
 	g.response(http.StatusOK, "ok", res)
+}
+
+func RouterWriteMetrics(c *gin.Context) {
+	j := make(map[string]interface{})
+	c.BindJSON(&j)
+	jj, err := json.Marshal(j)
+	fmt.Println(string(jj), err)
+	c.JSON(http.StatusOK, nil)
 }

@@ -14,3 +14,5 @@ sleep 1
 tail -n 1 ${CONTAINER_IDS_FILE}
 # 输出 password
 docker exec -i "${CONTAINER_NAME}" cat /home/coder/.config/code-server/config.yaml | grep "password:" | awk '{print $2}'
+# 输出 container_ip
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "${CONTAINER_NAME}"

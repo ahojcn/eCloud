@@ -60,6 +60,8 @@ func SetupRouter() *gin.Engine {
 	Router.POST("/metrics", controller.MonitorWriteMetrics)
 	Router.GET("/metrics", controller.MonitorQueryMetrics)
 
+	Router.POST("/router", controller.RouterWriteMetrics)
+
 	// ICode
 	Router.GET("/icode", controller.GetICodeList)
 	Router.POST("/icode", controller.CreateICode)

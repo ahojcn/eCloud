@@ -13,6 +13,7 @@ type ICode struct {
 	Port          int       `json:"port" xorm:"notnull"`
 	Password      string    `json:"password" xorm:"varchar(128) notnull"`
 	ContainerId   string    `json:"container_id" xorm:"varchar(128) notnull"`
+	ContainerIP   string    `json:"container_ip" xorm:"varchar(64) notnull"`
 	ContainerPort int       `json:"container_port" xorm:"notnull"`
 	CreateTime    time.Time `json:"create_time" xorm:"notnull created"`
 	UpdateTime    time.Time `json:"update_time" xorm:"notnull updated"`

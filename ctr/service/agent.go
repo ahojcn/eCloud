@@ -6,7 +6,7 @@ import (
 	"github.com/ahojcn/ecloud/ctr/util"
 )
 
-func DeployAgent(host model.Host) ([]string, error) {
+func DeployAgent(host *model.Host) ([]string, error) {
 	var res []string
 	ip := util.Config.Section("system").Key("ip").String()
 	port := util.Config.Section("system").Key("listen_port").String()
@@ -32,5 +32,31 @@ func DeployAgent(host model.Host) ([]string, error) {
 	}
 	res = append(res, res1)
 	res = append(res, res2)
+	return res, err
+}
+
+func DeployNginx(host *model.Host) ([]string, error) {
+	var res []string
+	ip := util.Config.Section("system").Key("ip").String()
+	port := util.Config.Section("system").Key("listen_port").String()
+	deployPath := util.Config.Section("agent").Key("deploy_path").String()
+	deployShell := util.Config.Section("agent").Key("deploy_shell").String()
+	cmd := fmt.Sprintf("cd %s"+
+		"&& curl -fsSL %s/router.sh --output router.sh"+
+		"&& chmod +x router.sh"+
+		"&& ./router.sh %s http://%s:%v"+
+		"&& echo OK",
+		deployPath, deployShell, deployShell, ip, port)
+	res1, err := host.RunCmd(cmd, 0)
+	res = append(res, res1)
+	if err != nil {
+		return res, err
+	}
+	cmd = fmt.Sprintf("cd %s && cat logstash.pid", deployPath)
+	res2, err := host.RunCmd(cmd, 0)
+	res = append(res, res2)
+	if err != nil {
+		return res, err
+	}
 	return res, err
 }

@@ -16,9 +16,9 @@ CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o ${BINPATH}${PREFIX}darwin-amd
 
 echo "go build done, push ${BINPATH} to gitee"
 
-cd ${BINPATH} && cp ../deploy.sh ./ && cp ../icode.sh ./
+cd ${BINPATH} && cp ../*.sh ./
 
-git status
-git add .
-git commit -m "$(date "+%Y-%m-%d %H:%M:%S")"
-git push origin master
+#git status
+#git add .
+#git commit -m "$(date "+%Y-%m-%d %H:%M:%S")"
+#git push origin master

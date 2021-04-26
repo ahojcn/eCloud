@@ -45,6 +45,7 @@ func CreateICode(user *model.User, rd *entity.CreateICodeRequestData) (int, erro
 		Port:          port,
 		Password:      resArray[1],
 		ContainerId:   resArray[0],
+		ContainerIP:   resArray[2],
 		ContainerPort: 8080,
 	}
 	if err = model.ICodeAdd(ic); err != nil {

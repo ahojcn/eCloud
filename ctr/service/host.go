@@ -53,7 +53,7 @@ func CreateHost(user *model.User, rd *entity.CreateHostRequestData) error {
 		return fmt.Errorf("添加主机信息失败, err:%v", err)
 	}
 
-	res, err := DeployAgent(host)
+	res, err := DeployAgent(&host)
 	if err != nil {
 		_ = model.HostDelete(&host)
 		return fmt.Errorf("部署失败, err:%v", append(res, err.Error()))

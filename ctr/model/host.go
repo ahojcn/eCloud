@@ -96,6 +96,12 @@ func HostUpdate(id int64, host *Host) error {
 	return err
 }
 
+func HostUpdateRouter(r bool) {
+	GetMaster().Cols("router").Update(&Host{
+		Router: r,
+	})
+}
+
 func HostOne(cons map[string]interface{}) (*Host, bool) {
 	orm := GetSlave()
 	host := new(Host)

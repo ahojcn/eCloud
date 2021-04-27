@@ -19,14 +19,22 @@ type Tree struct {
 	IsDeleted   bool      `json:"is_deleted" xorm:"default false"`
 }
 
+const (
+	TreeTypeNamespace   = 4
+	TreeTypeProductLine = 3
+	TreeTypeGroup       = 2
+	TreeTypeService     = 1
+	TreeTypeCluster     = 0
+)
+
 // TypeMsg 获取 tree 中 type 的文字描述
 func (t Tree) TypeMsg() string {
 	m := map[int]string{
-		0: "cluster",
-		1: "service",
-		2: "group",
-		3: "pdl",
-		4: "namespace",
+		TreeTypeCluster:     "cluster",
+		TreeTypeService:     "service",
+		TreeTypeGroup:       "group",
+		TreeTypeProductLine: "pdl",
+		TreeTypeNamespace:   "namespace",
 	}
 	return m[t.Type]
 }

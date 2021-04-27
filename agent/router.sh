@@ -44,7 +44,7 @@ yum install -y pcre pcre-devel make zlib zlib-devel openssl openssl-devel
 curl "${SERVER_ROOT_URL}/${NGINX}" --output "${NGINX}"
 mkdir -p "${ROOT_PATH}/nginx/conf/conf.d/"
 mkdir -p "${ROOT_PATH}/nginx/logs/"
-tar xfv "${NGINX}"
+tar xf "${NGINX}"
 cd "${ROOT_PATH}/nginx/${NGINX_PREFIX}" || exit
 ./configure && make && make install
 cp -r "${ROOT_PATH}/nginx/${NGINX_PREFIX}/conf" "${ROOT_PATH}/nginx/"
@@ -62,7 +62,7 @@ ps x | grep logstash | awk '{print $1}' | xargs kill -9
 mkdir ${ROOT_PATH}/logstash -p
 cd "${ROOT_PATH}/logstash" || exit
 curl "${SERVER_ROOT_URL}/${LOGSTASH}" --output "${LOGSTASH}"
-tar xvf "${LOGSTASH}"
+tar xf "${LOGSTASH}"
 echo "
 input {
 	file {

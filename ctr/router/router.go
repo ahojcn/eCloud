@@ -60,12 +60,18 @@ func SetupRouter() *gin.Engine {
 	Router.POST("/metrics", controller.MonitorWriteMetrics)
 	Router.GET("/metrics", controller.MonitorQueryMetrics)
 
+	// TODO 上报监控数据
 	Router.POST("/router", controller.RouterWriteMetrics)
 
 	// ICode
 	Router.GET("/icode", controller.GetICodeList)
 	Router.POST("/icode", controller.CreateICode)
 	Router.DELETE("/icode", controller.DeleteICode)
+
+	// Router
+	Router.POST("/m_router", controller.MarkHostAsRouter)
+	Router.GET("/m_router", controller.RouterList)
+	Router.GET("/m_router/status", controller.RouterStatus)
 
 	return Router
 }

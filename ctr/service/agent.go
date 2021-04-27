@@ -35,7 +35,8 @@ func DeployAgent(host *model.Host) ([]string, error) {
 	return res, err
 }
 
-func DeployNginx(host *model.Host) ([]string, error) {
+// DeployRouter 会在目标机器上部署 nginx、logstash
+func DeployRouter(host *model.Host) ([]string, error) {
 	var res []string
 	ip := util.Config.Section("system").Key("ip").String()
 	port := util.Config.Section("system").Key("listen_port").String()

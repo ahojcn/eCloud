@@ -22,6 +22,7 @@ func main() {
 	err = engine.Sync(
 		new(model.Tree), new(model.User), new(model.UserTree),
 		new(model.HostUser), new(model.Host), new(model.ICode),
+		new(model.Router),
 	)
 	if err != nil {
 		panic(err)

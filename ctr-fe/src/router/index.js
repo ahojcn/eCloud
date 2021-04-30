@@ -19,6 +19,9 @@ import ICode from "@/view/ICode";
 import ICodeDetail from "@/view/ICode/ICodeDetail";
 import ICodeCreate from "@/view/ICode/ICodeCreate";
 
+import Deploy from "@/view/Deploy";
+import RouterInfo from '@/view/Deploy/RouterInfo'
+
 Vue.use(VueRouter);
 
 const originalPush = VueRouter.prototype.push;
@@ -64,6 +67,15 @@ let router = new VueRouter({
                             component: TreeNodeDetail,
                             meta: {title: '节点详情'}
                         },
+                    ]
+                },
+                {
+                    name: 'Deploy',
+                    path: '/deploy',
+                    component: Deploy,
+                    meta: {title: '部署'},
+                    children: [
+                        {name: 'RouterInfo', path: 'deploy/router', component: RouterInfo, meta: {title: '接入层信息'}}
                     ]
                 },
                 {

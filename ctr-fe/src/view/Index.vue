@@ -23,10 +23,17 @@
             <Icon type="ios-stats"/>
             监控
           </MenuItem>
-          <MenuItem name="deploy">
-            <Icon type="md-cloud-upload"/>
-            部署
-          </MenuItem>
+          <Submenu name="deploy">
+            <template slot="title">
+              <Icon type="md-cloud-upload"/>
+              部署
+            </template>
+            <MenuGroup title="接入层">
+              <MenuItem name="m_router" :to="{name: 'Deploy'}">
+                接入层信息
+              </MenuItem>
+            </MenuGroup>
+          </Submenu>
           <Submenu name="resource">
             <template slot="title">
               <Icon type="md-code-working"/>

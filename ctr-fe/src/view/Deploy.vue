@@ -1,13 +1,12 @@
 <template>
-  <div>
-    <Split v-model="split" class="split">
+  <div class="split">
+    <Split v-model="split">
       <div slot="left" class="split-pane">
         <ServiceTree ref="ServiceTree" @onTreeNodeSelected="onTreeSelectedOrExpand"
                      @onToggleExpend="onTreeSelectedOrExpand"></ServiceTree>
       </div>
       <div slot="right" class="split-pane">
-        <router-view @onAddUserTreeSuccess="refreshTree"
-                     @onTreeNodeAddSuccessful="refreshTree"></router-view>
+        <router-view></router-view>
       </div>
     </Split>
   </div>
@@ -17,24 +16,26 @@
 import ServiceTree from "@/components/ServiceTree";
 
 export default {
-  name: "Service",
+  name: "Deploy",
   components: {ServiceTree},
-  methods: {
-    onTreeSelectedOrExpand(node) {
-      this.$router.push({name: 'TreeNodeDetail', query: {id: node.id}})
-    },
-    onTreeNodeAddSuccessful() {
-      this.$refs.ServiceTree.refreshTree()
-    },
-    refreshTree() {
-      this.$refs.ServiceTree.refreshTree()
-    }
-  },
   data() {
     return {
       split: 0.15
     }
-  }
+  },
+  methods: {
+    onTreeSelectedOrExpand(node) {
+      if (node.type === 4) {
+        this.$router.push({name: 'RouterInfo', query: {id: node.id}})
+      } else {
+        this.$Modal.error({
+          title: '请选择一个Namespace节点'
+        })
+        node.selected = false
+        node.expand = false
+      }
+    }
+  },
 }
 </script>
 

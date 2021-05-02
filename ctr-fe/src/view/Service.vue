@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import ServiceTree from "@/components/ServiceTree";
+import ServiceTree from "@/components/Tree/ServiceTree";
 
 export default {
   name: "Service",

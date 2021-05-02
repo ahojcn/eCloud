@@ -59,7 +59,7 @@
 <script>
 import {apiAddTreeNode} from "@/api/tree";
 
-import SelectTreeNodeByName from "@/components/SelectTreeNodeByName";
+import SelectTreeNodeByName from "@/components/Tree/SelectTreeNodeByName";
 
 export default {
   name: "TreeNodeCreate",

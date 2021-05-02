@@ -14,6 +14,7 @@ const service = axios.create({
     headers: {
         'Content-Type': 'application/json;charset=UTF-8'
     },
+    timeout: 60000 * 10,
 });
 
 // request 拦截器

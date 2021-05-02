@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import ServiceTree from "@/components/ServiceTree";
+import ServiceTree from "@/components/Tree/ServiceTree";
 
 export default {
   name: "Deploy",
@@ -28,11 +28,7 @@ export default {
       if (node.type === 4) {
         this.$router.push({name: 'RouterInfo', query: {id: node.id}})
       } else {
-        this.$Modal.error({
-          title: '请选择一个Namespace节点'
-        })
-        node.selected = false
-        node.expand = false
+        console.log(node)
       }
     }
   },

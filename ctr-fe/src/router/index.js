@@ -57,13 +57,13 @@ let router = new VueRouter({
                     children: [
                         {
                             name: 'TreeNodeCreate',
-                            path: '/service/create',
+                            path: 'create',
                             component: TreeNodeCreate,
                             meta: {title: '创建节点'}
                         },
                         {
                             name: 'TreeNodeDetail',
-                            path: '/service/detail',
+                            path: 'detail',
                             component: TreeNodeDetail,
                             meta: {title: '节点详情'}
                         },
@@ -75,7 +75,7 @@ let router = new VueRouter({
                     component: Deploy,
                     meta: {title: '部署'},
                     children: [
-                        {name: 'RouterInfo', path: 'deploy/router', component: RouterInfo, meta: {title: '接入层信息'}}
+                        {name: 'RouterInfo', path: 'router', component: RouterInfo, meta: {title: '接入层信息'}}
                     ]
                 },
                 {
@@ -86,25 +86,25 @@ let router = new VueRouter({
                     children: [
                         {
                             name: 'HostDetail',
-                            path: '/resource/host/detail',
+                            path: 'host/detail',
                             component: HostDetail,
                             meta: {title: '主机详情'}
                         },
                         {
                             name: 'HostAdd',
-                            path: '/resource/host/add',
+                            path: 'host/add',
                             component: HostAdd,
                             meta: {title: '添加主机'}
                         },
                         {
                             name: 'HostMonitor',
-                            path: '/resource/host/monitor',
+                            path: 'host/monitor',
                             component: HostMonitor,
                             meta: {title: '主机监控'}
                         },
                         {
                             name: 'HostRunCmd',
-                            path: '/resource/host/cmd',
+                            path: 'host/cmd',
                             component: HostRunCmd,
                             meta: {title: '主机监控'}
                         },
@@ -118,13 +118,13 @@ let router = new VueRouter({
                     children: [
                         {
                             name: "ICodeCreate",
-                            path: "/icode/create",
+                            path: "create",
                             component: ICodeCreate,
                             meta: {title: "创建开发机"}
                         },
                         {
                             name: "ICodeDetail",
-                            path: "/icode/detail",
+                            path: "detail",
                             component: ICodeDetail,
                             meta: {title: "详细信息"}
                         },

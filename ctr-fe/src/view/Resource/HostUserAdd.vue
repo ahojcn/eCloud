@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import SelectUserByUsernameOrEmail from "@/components/SelectUserByUsernameOrEmail";
+import SelectUserByUsernameOrEmail from "@/components/User/SelectUserByUsernameOrEmail";
 import {apiAddHostUser} from "@/api/host";
 
 export default {

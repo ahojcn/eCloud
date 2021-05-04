@@ -2,11 +2,12 @@ package service
 
 import (
 	"fmt"
-	"github.com/ahojcn/ecloud/ctr/model"
-	client "github.com/influxdata/influxdb1-client/v2"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/ahojcn/ecloud/ctr/model"
+	client "github.com/influxdata/influxdb1-client/v2"
 )
 
 func getTableNameByMetrics(metrics string) string {

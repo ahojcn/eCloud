@@ -1,12 +1,13 @@
 package model
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/ahojcn/ecloud/ctr/util"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
-	"github.com/influxdata/influxdb1-client/v2"
-	"math/rand"
-	"time"
+	client "github.com/influxdata/influxdb1-client/v2"
 )
 
 var dbMaster *xorm.Engine

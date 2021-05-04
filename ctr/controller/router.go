@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func MarkHostAsRouter(c *gin.Context) {

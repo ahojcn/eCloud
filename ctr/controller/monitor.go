@@ -3,10 +3,11 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func MonitorWriteMetrics(c *gin.Context) {

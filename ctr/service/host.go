@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	"github.com/ahojcn/ecloud/ctr/entity"
-	"github.com/ahojcn/ecloud/ctr/model"
 	"net/http"
 	"time"
+
+	"github.com/ahojcn/ecloud/ctr/entity"
+	"github.com/ahojcn/ecloud/ctr/model"
 )
 
 // GetHostInfoList 获取用户有权限的主机列表
@@ -14,7 +15,7 @@ func GetHostInfoList(user *model.User, rd *entity.GetHostInfoRequestData) (res [
 		return nil, fmt.Errorf("获取失败:参数错误或未登录")
 	}
 
-	hul := make([]model.HostUser, 0)
+	var hul []model.HostUser
 
 	if rd.Id != nil {
 		hul, err = model.HostUserList(map[string]interface{}{"user_id": user.Id, "host_id": rd.Id})

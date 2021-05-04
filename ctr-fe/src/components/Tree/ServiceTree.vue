@@ -46,12 +46,6 @@ export default {
       apiGetTreeInfo().then(res => {
         if (res.code === 200) {
           this.tree = res.data
-          if (this.tree.length !== 0) {
-            this.$set(this.tree[0], 'expand', true)
-            this.$set(this.tree[0], 'selected', true)
-            this.$emit('onTreeNodeSelected', this.tree[0])
-            this.onToggleExpend(this.tree[0])
-          }
         }
       })
     },
@@ -80,7 +74,11 @@ export default {
       ])
     },
     onSelectChange(nodes, current_node) {
-      current_node.expand = true
+      if (current_node.expand) {
+        current_node.expand = !current_node.expand
+      } else {
+        current_node.expand = true
+      }
       this.$emit('onTreeNodeSelected', current_node)
     },
     onToggleExpend(current_node) {

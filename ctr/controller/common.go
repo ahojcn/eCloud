@@ -2,6 +2,9 @@ package controller
 
 import (
 	"errors"
+	"reflect"
+	"strings"
+
 	"github.com/ahojcn/ecloud/ctr/model"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -10,8 +13,6 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
-	"reflect"
-	"strings"
 )
 
 var trans ut.Translator

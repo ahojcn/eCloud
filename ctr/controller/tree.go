@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // CreateTreeNode 创建服务树节点
@@ -71,7 +72,6 @@ func GetTreeNodes(c *gin.Context) {
 	}
 
 	g.response(http.StatusOK, "获取服务树信息完成", rdata)
-	return
 }
 
 // DeleteTreeNode 标记删除节点

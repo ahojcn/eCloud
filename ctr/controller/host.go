@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/model"
 	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // GetHostInfo 获取主机列表接口

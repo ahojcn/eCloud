@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	"github.com/ahojcn/ecloud/ctr/entity"
-	"github.com/ahojcn/ecloud/ctr/model"
 	"net/http"
 	"strings"
+
+	"github.com/ahojcn/ecloud/ctr/entity"
+	"github.com/ahojcn/ecloud/ctr/model"
 )
 
 func MarkHostAsRouter(user *model.User, rd *entity.MarkHostAsRouterRequestData) (int, []string, error) {
@@ -45,7 +46,7 @@ func MarkHostAsRouter(user *model.User, rd *entity.MarkHostAsRouterRequestData) 
 	r.Log = strings.Join(res, "\n")
 	err = model.RouterUpdate(r.Id, r)
 
-	return http.StatusOK, res, nil
+	return http.StatusOK, res, err
 }
 
 func RouterList(user *model.User, rd *entity.RouterListRequestData) (int, []model.RouterInfo, error) {

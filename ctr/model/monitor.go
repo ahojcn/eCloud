@@ -1,9 +1,10 @@
 package model
 
 import (
-	client "github.com/influxdata/influxdb1-client/v2"
 	"log"
 	"time"
+
+	client "github.com/influxdata/influxdb1-client/v2"
 )
 
 // MetricsCPU CPU监控指标

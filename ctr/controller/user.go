@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/model"
 	"github.com/ahojcn/ecloud/ctr/util"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // CreateUser 用户注册
@@ -29,10 +30,10 @@ func CreateUser(c *gin.Context) {
 	}
 	// 存入数据库
 	user := &model.User{
-		Username:   requestData.Username,
-		Password:   util.Md5Str(requestData.Password),
-		Email:      requestData.Email,
-		IsActive:   0,
+		Username: requestData.Username,
+		Password: util.Md5Str(requestData.Password),
+		Email:    requestData.Email,
+		IsActive: 0,
 	}
 	err = model.UserAdd(user)
 	if err != nil {
@@ -91,7 +92,6 @@ func GetUsersInfoByUsername(c *gin.Context) {
 	}
 
 	g.response(http.StatusOK, "查询用户信息完成", users)
-	return
 }
 
 // todo 仅管理员

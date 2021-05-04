@@ -3,8 +3,9 @@ package model
 import (
 	"errors"
 	"fmt"
-	"github.com/ahojcn/ecloud/ctr/util"
 	"time"
+
+	"github.com/ahojcn/ecloud/ctr/util"
 )
 
 type Host struct {

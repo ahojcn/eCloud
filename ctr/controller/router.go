@@ -76,3 +76,26 @@ func RouterStatus(c *gin.Context) {
 
 	g.response(http.StatusOK, "获取接入层状态成功", res)
 }
+
+func NginxConfig(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	rd := new(entity.NginxConfigRequestData)
+	if err = c.ShouldBindQuery(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	status, res, err := service.NginxConfig(user, rd)
+	if err != nil {
+		g.response(status, "获取nginx配置失败", err)
+		return
+	}
+
+	g.response(http.StatusOK, "获取nginx配置完成", res)
+}

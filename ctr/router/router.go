@@ -73,6 +73,7 @@ func SetupRouter() *gin.Engine {
 	Router.POST("/m_router", controller.MarkHostAsRouter)
 	Router.GET("/m_router", controller.RouterList)
 	Router.GET("/m_router/status", controller.RouterStatus)
+	Router.GET("/m_router/nginx/config", controller.NginxConfig)
 
 	return Router
 }

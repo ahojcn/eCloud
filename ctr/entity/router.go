@@ -21,3 +21,8 @@ type RouterStatusResponseData struct {
 	LogstashConfig string                 `json:"logstash_config"`
 	LogstashStatus string                 `json:"logstash_status"`
 }
+
+type NginxConfigRequestData struct {
+	NsId *int64 `form:"ns_id" binding:"required,gt=0" label:"ns节点id"`
+	FileName *string `form:"file_name" binding:"omitempty,min=1" label:"配置文件名"`
+}

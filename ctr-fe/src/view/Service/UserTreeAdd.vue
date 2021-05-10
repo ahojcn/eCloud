@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import {apiAddUserTree} from '@/api/tree'
+import {apiAddUserTree} from '@/api/tree';
 import SelectUserByUsernameOrEmail from "@/components/User/SelectUserByUsernameOrEmail";
 
 export default {

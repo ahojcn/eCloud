@@ -94,6 +94,11 @@ func GetUsersInfoByUsername(c *gin.Context) {
 	g.response(http.StatusOK, "查询用户信息完成", users)
 }
 
+// UserActive 用户激活接口
+func UserActive(c *gin.Context) {
+	//g := newGin(c)
+}
+
 // todo 仅管理员
 // UpdateUserInfoById 更新用户信息
 func UpdateUserInfoById(c *gin.Context) {}

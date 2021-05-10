@@ -83,7 +83,7 @@ func HostAdd(host *Host) error {
 	orm := GetMaster()
 	affected, err := orm.Insert(host)
 	if affected == 0 {
-		return errors.New("insert failed, affected = 0")
+		return fmt.Errorf("insert failed, affected = 0")
 	}
 	return err
 }
@@ -128,7 +128,7 @@ func HostDelete(host *Host) error {
 	orm := GetMaster()
 	affected, err := orm.Delete(host)
 	if affected == 0 {
-		return errors.New("delete failed, affected = 0")
+		return fmt.Errorf("delete failed, affected = 0")
 	}
 	return err
 }

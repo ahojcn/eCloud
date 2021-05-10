@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/ahojcn/ecloud/ctr/service/nginx"
 	"net/http"
 	"strings"
 
@@ -125,4 +126,35 @@ func RouterStatus(user *model.User, rd *entity.RouterStatusRequestData) (int, *e
 	}
 
 	return http.StatusOK, res, nil
+}
+
+func NginxConfig(user *model.User, rd *entity.NginxConfigRequestData) (int, []string, error) {
+	if rd == nil || rd.NsId == nil {
+		return http.StatusBadRequest, nil, fmt.Errorf("参数错误")
+	}
+
+	r, has := model.RouterOne(map[string]interface{}{"ns_id": *rd.NsId})
+	if !has {
+		return http.StatusBadRequest, nil, fmt.Errorf("未查询到nsid,可能未部署router")
+	}
+
+	h, err := r.GetHostInfo()
+	if err != nil {
+		return http.StatusInternalServerError, nil, fmt.Errorf("服务器开小差了，err:%v", err)
+	}
+
+	ngx := nginx.New(h)
+	if rd.FileName != nil {
+		res, err := ngx.ConfContent(*rd.FileName)
+		if err != nil {
+			return http.StatusInternalServerError, nil, fmt.Errorf("服务器开小差了，err:%v", err)
+		}
+		return http.StatusOK, []string{res}, nil
+	} else {
+		fileNames, err := ngx.ConfList()
+		if err != nil {
+			return http.StatusInternalServerError, nil, fmt.Errorf("服务器开小差了，err:%v", err)
+		}
+		return http.StatusOK, fileNames, nil
+	}
 }

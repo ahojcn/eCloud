@@ -214,6 +214,7 @@ func MakeRouter(p *model.PipeLine, containers []model.Container) string {
 		Parameters: []string{"/"},
 	}
 
+	// todo 这里的监听端口没有保存，后面还要配置分流
 	listenDirective := &gonginx.Directive{
 		Name:       "listen",
 		Parameters: []string{strconv.Itoa(routerHost.GetUnusedPort())},

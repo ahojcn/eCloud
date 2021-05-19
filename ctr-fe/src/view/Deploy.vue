@@ -27,8 +27,10 @@ export default {
     onTreeSelectedOrExpand(node) {
       if (node.type === 4) {
         this.$router.push({name: 'RouterInfo', query: {id: node.id}})
-      } else {
-        console.log(node)
+      } else if (node.type === 1) {
+        this.$router.push({name: 'PipeLine', query: {id: node.id}})
+      } else if (node.type === 0) {
+        this.$router.push({name: 'DeployClusterInfo', query: {id: node.id}})
       }
     }
   },

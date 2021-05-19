@@ -21,6 +21,8 @@ import ICodeCreate from "@/view/ICode/ICodeCreate";
 
 import Deploy from "@/view/Deploy";
 import RouterInfo from '@/view/Deploy/RouterInfo'
+import Cai from "@/view/Cai";
+import PipeLine from "@/view/Deploy/PipeLine";
 
 Vue.use(VueRouter);
 
@@ -36,6 +38,12 @@ let router = new VueRouter({
             path: "/login",
             component: Login,
             meta: {title: '登录'},
+        },
+        {
+            name: 'Cai',
+            path: "/cai",
+            component: Cai,
+            meta: {title: '识别'},
         },
         {
             name: 'Register',
@@ -75,7 +83,14 @@ let router = new VueRouter({
                     component: Deploy,
                     meta: {title: '部署'},
                     children: [
-                        {name: 'RouterInfo', path: 'router', component: RouterInfo, meta: {title: '接入层信息'}}
+                        {name: 'RouterInfo', path: 'router', component: RouterInfo, meta: {title: '接入层信息'}},
+                        {name: 'PipeLine', path: 'pipeline', component: PipeLine, meta: {title: '配置流水线'}},
+                        {
+                            name: 'DeployClusterInfo',
+                            path: 'cluster',
+                            component: () => import('@/view/Deploy/ClusterInfo'),
+                            meta: {title: '集群信息'}
+                        },
                     ]
                 },
                 {
@@ -129,7 +144,7 @@ let router = new VueRouter({
                             meta: {title: "详细信息"}
                         },
                     ]
-                }
+                },
             ]
         },
     ]

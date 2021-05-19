@@ -13,7 +13,18 @@
             <Button :to="{name: 'TreeNodeDetail', query: {id: router_info.ns_info.id}}" type="primary" size="small"
                     icon="md-arrow-forward"></Button>
             <br>
-            <Input style="width: 500px" readonly v-model="router_info.ns_info.description" type="textarea"></Input>
+            <Alert type="info">
+              {{router_info.ns_info.description}}
+            </Alert>
+          </FormItem>
+          <FormItem label="接入层状态">
+            <Input autosize readonly type="textarea" v-model="router_status.nginx_status"></Input>
+          </FormItem>
+          <FormItem label="logstash状态">
+            <Input autosize readonly type="textarea" v-model="router_status.logstash_status"></Input>
+          </FormItem>
+          <FormItem label="logstash配置">
+            <Input autosize readonly type="textarea" v-model="router_status.logstash_config"></Input>
           </FormItem>
           <FormItem label="接入层信息">
             创建于
@@ -52,7 +63,7 @@
 
 <script>
 import {apiGetTreeInfo} from "@/api/tree";
-import {apiGetRouterInfo, apiRouterDeploy} from "@/api/m_router";
+import {apiGetRouterInfo, apiGetRouterStatus, apiRouterDeploy} from "@/api/m_router";
 
 import SelectHost from "@/components/Host/SelectHost";
 
@@ -82,7 +93,9 @@ export default {
       show_tree_node_info: false,
       show_router_deploy_modal: false,
       selected_host_id: -1,
-      deploy_log: ''
+      deploy_log: '',
+
+      router_status: {},
     }
   },
   methods: {
@@ -102,6 +115,7 @@ export default {
           if (res.data.length !== 0) {
             this.show_router_info = true
             this.router_info = res.data[0]
+            this.getRouterStatus(this.router_info.router.id)
           } else {
             this.show_router_info = false
           }
@@ -125,6 +139,11 @@ export default {
               this.$Spin.hide()
             })
       }
+    },
+    getRouterStatus(id) {
+      apiGetRouterStatus({id: id}).then(res => {
+        this.router_status = res.data
+      })
     },
   },
 }

@@ -1,0 +1,75 @@
+<template>
+  <div>
+    <Card title="集群配置" style="min-height: 100vh">
+      <div v-if="show_create_cluster_form === true">
+        <Alert type="error">
+          此集群还没有配置
+        </Alert>
+        <ClusterCreate @onClusterCreated="onClusterCreated" v-if="show_create_cluster_form === true"></ClusterCreate>
+      </div>
+
+      <div v-else>
+        <Form>
+          <FormItem label="容器端口">
+            <InputNumber v-model="cluster_info.container_port" readonly></InputNumber>
+          </FormItem>
+          <FormItem label="集群容器数量">
+            <InputNumber v-model="cluster_info.cluster_num" readonly></InputNumber>
+          </FormItem>
+          <FormItem label="当前容器数量">
+            <InputNumber v-model="cluster_info.current_cluster_num" readonly></InputNumber>
+          </FormItem>
+        </Form>
+      </div>
+    </Card>
+  </div>
+</template>
+
+<script>
+import {apiClusterRetrieve} from "@/api/cluster";
+import ClusterCreate from "@/components/Cluster/Create";
+
+export default {
+  name: "DeployClusterInfo",
+  components: {ClusterCreate},
+  computed: {
+    tree_id: function () {
+      return parseInt(this.$route.query.id)
+    }
+  },
+  watch: {
+    tree_id: function () {
+      this.getClusterData()
+    }
+  },
+  data() {
+    return {
+      show_create_cluster_form: false,
+      cluster_info: {},
+    }
+  },
+  mounted() {
+    this.getClusterData()
+  },
+  methods: {
+    getClusterData() {
+      apiClusterRetrieve({tree_id: this.tree_id}).then(res => {
+        if (res.code === 404) {
+          this.show_create_cluster_form = true
+        } else {
+          this.show_create_cluster_form = false
+          this.cluster_info = res.data
+        }
+      })
+    },
+    onClusterCreated(data) {
+      this.$Message.info(`当前集群容器数量：${data.current_cluster_num}`)
+      this.getClusterData()
+    }
+  },
+}
+</script>
+
+<style scoped>
+
+</style>

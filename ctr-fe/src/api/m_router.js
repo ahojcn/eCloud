@@ -17,3 +17,12 @@ export function apiRouterDeploy(data) {
         data
     })
 }
+
+// 获取接入层状态
+export function apiGetRouterStatus(params) {
+    return request({
+        url: 'm_router/status',
+        method: 'get',
+        params: params
+    })
+}

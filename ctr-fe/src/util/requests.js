@@ -14,7 +14,7 @@ const service = axios.create({
     headers: {
         'Content-Type': 'application/json;charset=UTF-8'
     },
-    timeout: 60000 * 10,
+    // timeout: 60000 * 10,
 });
 
 // request 拦截器
@@ -54,14 +54,12 @@ service.interceptors.response.use(
             Notice.error({
                 title: data.msg,
                 desc: JSON.stringify(data.data),
-                duration: 0
             })
             return data;
         } else {
             Notice.error({
                 title: '出错了！',
                 desc: err,
-                duration: 0
             })
             return err;
         }

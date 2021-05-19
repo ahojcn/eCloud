@@ -3,6 +3,7 @@ package nginx
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 // ConfList 获取 nginx 根配置
@@ -49,4 +50,10 @@ func (n *Nginx) ConfContent(fileName string) (string, error) {
 		return "", fmt.Errorf("获取nginx配置失败,err:%v,cmd:%s", err, cmd)
 	}
 	return res, nil
+}
+
+func (n *Nginx) ConfWrite(fileName string, content string) {
+	filePath := fmt.Sprintf("%s%s", ConfDirPath, fileName)
+	cmd := fmt.Sprintf("echo '%s' > %s", content, filePath)
+	n.Host.RunCmd(cmd, time.Duration(0))
 }

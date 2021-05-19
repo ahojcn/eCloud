@@ -7,7 +7,7 @@ import (
 
 type Container struct {
 	Id            int64     `json:"id" xorm:"pk autoincr notnull"`
-	HostID        int64     `json:"host_id" xorm:"notnull"`
+	HostId        int64     `json:"host_id" xorm:"notnull"`
 	ContainerId   string    `json:"container_id" xorm:"varchar(128) notnull"`
 	ContainerIp   string    `json:"container_ip" xorm:"varchar(64) notnull"`
 	ContainerPort int       `json:"container_port" xorm:"notnull"`
@@ -17,16 +17,16 @@ type Container struct {
 }
 
 func (c *Container) GetHost() (*Host, error) {
-	h, has := HostOne(map[string]interface{}{"id": c.HostID})
+	h, has := HostOne(map[string]interface{}{"id": c.HostId})
 	if !has {
-		return nil, fmt.Errorf("获取主机失败,err:不存在的主机%d,containerId:%v", c.HostID, c.Id)
+		return nil, fmt.Errorf("获取主机失败,err:不存在的主机%d,containerId:%v", c.HostId, c.Id)
 	}
 	return h, nil
 }
 
-func ContainerAdd(host *Container) error {
+func ContainerAdd(c *Container) error {
 	orm := GetMaster()
-	affected, err := orm.Insert(host)
+	affected, err := orm.Insert(c)
 	if affected == 0 {
 		return fmt.Errorf("insert failed, affected = 0")
 	}

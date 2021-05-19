@@ -23,6 +23,7 @@ func main() {
 		new(model.Tree), new(model.User), new(model.UserTree),
 		new(model.HostUser), new(model.Host), new(model.ICode),
 		new(model.Router),
+		new(model.Cluster), new(model.PipeLine), new(model.Container), new(model.ClusterContainer),
 	)
 	if err != nil {
 		panic(err)

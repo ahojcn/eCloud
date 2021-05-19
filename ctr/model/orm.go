@@ -25,8 +25,8 @@ func init() {
 	}
 	dbMaster.SetMaxIdleConns(10)
 	dbMaster.SetMaxOpenConns(200)
-	dbMaster.ShowSQL(true)
-	dbMaster.ShowExecTime(true)
+	dbMaster.ShowSQL(false)
+	dbMaster.ShowExecTime(false)
 
 	// 从库添加
 	slavesConnStr := util.Config.Section("mysql_slave").Keys()
@@ -37,8 +37,8 @@ func init() {
 		} else {
 			_dbSlave.SetMaxIdleConns(10)
 			_dbSlave.SetMaxOpenConns(200)
-			_dbSlave.ShowSQL(true)
-			_dbSlave.ShowExecTime(true)
+			_dbSlave.ShowSQL(false)
+			_dbSlave.ShowExecTime(false)
 			dbSlave = append(dbSlave, _dbSlave)
 		}
 	}

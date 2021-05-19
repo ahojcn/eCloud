@@ -75,5 +75,15 @@ func SetupRouter() *gin.Engine {
 	Router.GET("/m_router/status", controller.RouterStatus)
 	Router.GET("/m_router/nginx/config", controller.NginxConfig)
 
+	// PipeLine
+	Router.GET("/pipeline/list", controller.PipeLineList)
+	Router.POST("/pipeline/create", controller.PipeLineCreate)
+	Router.POST("/pipeline/run", controller.PipeLineRun)
+
+	// Cluster
+	Router.GET("/cluster/one", controller.ClusterRetrieve)
+	Router.POST("/cluster/create", controller.ClusterCreate)
+	Router.GET("/cluster/list", controller.ClusterList)
+
 	return Router
 }

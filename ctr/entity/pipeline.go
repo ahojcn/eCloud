@@ -20,3 +20,14 @@ type PipeLineCreateRequestData struct {
 type PipeLineRunRequestData struct {
 	Id *int64 `json:"id" binding:"required,gt=0" label:"流水线Id"`
 }
+
+type PipeLineStatusRequestData struct {
+	Id *int64 `form:"id" binding:"required,gt=0" label:"流水线Id"`
+}
+
+type PipeLiseStatusResponseData struct {
+	Current int      `json:"current"`
+	Steps   []string `json:"steps"`
+	Content []string `json:"content"`
+	Logs    string   `json:"logs"`
+}

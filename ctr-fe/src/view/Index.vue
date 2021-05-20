@@ -86,6 +86,7 @@
               退出
             </MenuItem>
           </Submenu>
+          <Button type="primary" size="small" @click="$Notice.destroy()">清空消息</Button>
         </div>
       </Menu>
     </Header>

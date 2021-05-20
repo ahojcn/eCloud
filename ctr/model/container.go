@@ -16,6 +16,19 @@ type Container struct {
 	UpdateTime    time.Time `json:"update_time" xorm:"notnull updated"`
 }
 
+type ContainerInfo struct {
+	Container
+	HostInfo *HostInfo `json:"host_info"`
+}
+
+func (c *Container) GetContainerInfo() *ContainerInfo {
+	h, _ := c.GetHost()
+	return &ContainerInfo{
+		Container: *c,
+		HostInfo:  h.GetHostInfo(),
+	}
+}
+
 func (c *Container) GetHost() (*Host, error) {
 	h, has := HostOne(map[string]interface{}{"id": c.HostId})
 	if !has {
@@ -54,9 +67,16 @@ func ContainerList(cons map[string]interface{}) ([]Container, error) {
 	return containers, err
 }
 
-func ContainerDelete(host *Host) error {
+func ContainerDelete(container *Container) error {
 	orm := GetMaster()
-	affected, err := orm.Delete(host)
+	h, _ := container.GetHost()
+	go func() {
+		_, err := h.RunCmd(fmt.Sprintf("docker rm -f %s", container.ContainerId), time.Duration(0))
+		if err != nil {
+			fmt.Printf("删除容器失败：err=%v,host_ip=%v,container_id=%v", err, h.IP, container.ContainerId)
+		}
+	}()
+	affected, err := orm.Delete(container)
 	if affected == 0 {
 		return fmt.Errorf("delete failed, affected = 0")
 	}

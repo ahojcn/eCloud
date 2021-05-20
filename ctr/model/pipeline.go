@@ -10,6 +10,8 @@ type PipeLine struct {
 	ClusterId      int64  `json:"cluster_id" xorm:"notnull"`
 	Status         int    `json:"status" xorm:"notnull default 1"`
 	StatusMsg      string `json:"status_msg" xorm:"varchar(32) notnull default '初始化'"`
+	RouterIp       string `json:"router_ip" xorm:"varchar(64) notnull default ''"`
+	RouterPort     int    `json:"router_port" xorm:"notnull default 9999"`
 	ContainerImage string `json:"container_image" xorm:"text notnull"`
 	ErrorLog       string `json:"error_log" xorm:"text notnull"`
 
@@ -25,7 +27,7 @@ type PipeLine struct {
 type PipeLineInfo struct {
 	PipeLine
 	ClusterInfo *ClusterInfo `json:"cluster_info"`
-	TreeInfo    *Tree    `json:"tree_info"`
+	TreeInfo    *Tree        `json:"tree_info"`
 }
 
 func (p PipeLine) GetPipeLineInfo() PipeLineInfo {
@@ -49,6 +51,9 @@ const (
 )
 
 var PipeLineStatusMsg = []string{"出错", "初始化", "构建镜像", "运行容器", "存活测试", "接入层介入", "运行中"}
+var PipeLineStatusContent = []string{
+	"出现错误", "流水线创建后未进行部署操作", "选择资源中的主机并构建镜像", "在选择的主机上运行容器",
+	"对每台容器进行存活测试", "生成接入层配置并reload生效", "正在运行，可以接入流量"}
 
 func (p *PipeLine) GetTree() (*Tree, error) {
 	t, has := TreeOne(map[string]interface{}{"id": p.TreeId})

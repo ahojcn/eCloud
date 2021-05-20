@@ -31,6 +31,29 @@ func MarkHostAsRouter(c *gin.Context) {
 	g.response(http.StatusOK, "创建router成功", res)
 }
 
+func RouterRedo(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	rd := new(entity.RouterRedoRequestData)
+	if err = c.ShouldBindJSON(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	status, res, err := service.RouterRedo(user, rd)
+	if err != nil {
+		g.response(status, "重新部署router失败", err)
+		return
+	}
+
+	g.response(http.StatusOK, "重新部署router成功", res)
+}
+
 func RouterList(c *gin.Context) {
 	g := newGin(c)
 	user, err := g.loginRequired()

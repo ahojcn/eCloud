@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form>
+    <Form inline>
       <FormItem label="预期容器数量">
         <InputNumber v-model="form.cluster_num"></InputNumber>
       </FormItem>
@@ -8,6 +8,7 @@
         <InputNumber v-model="form.container_port"></InputNumber>
       </FormItem>
       <FormItem>
+        <br>
         <Button type="primary" @click="onClusterCreateBtnClick">保存集群配置</Button>
       </FormItem>
     </Form>

@@ -55,5 +55,11 @@ func (n *Nginx) ConfContent(fileName string) (string, error) {
 func (n *Nginx) ConfWrite(fileName string, content string) {
 	filePath := fmt.Sprintf("%s%s", ConfDirPath, fileName)
 	cmd := fmt.Sprintf("echo '%s' > %s", content, filePath)
-	n.Host.RunCmd(cmd, time.Duration(0))
+	_, _ = n.Host.RunCmd(cmd, time.Duration(0))
+}
+
+func (n *Nginx) ConfDelete(fileName string) {
+	filePath := fmt.Sprintf("%s%s", ConfDirPath, fileName)
+	cmd := fmt.Sprintf("rm -f %s", filePath)
+	_, _ = n.Host.RunCmd(cmd, time.Duration(0))
 }

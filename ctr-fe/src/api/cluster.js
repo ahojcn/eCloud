@@ -9,6 +9,15 @@ export function apiClusterRetrieve(params) {
     })
 }
 
+// 删除单个集群配置
+export function apiClusterDelete(params) {
+    return request({
+        url: 'cluster/delete',
+        method: 'get',
+        params: params
+    })
+}
+
 // 创建集群配置
 export function apiClusterCreate(data) {
     return request({

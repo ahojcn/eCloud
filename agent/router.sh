@@ -63,23 +63,41 @@ mkdir ${ROOT_PATH}/logstash -p
 cd "${ROOT_PATH}/logstash" || exit
 curl "${SERVER_ROOT_URL}/${LOGSTASH}" --output "${LOGSTASH}"
 tar xf "${LOGSTASH}"
-echo "
+echo '
 input {
 	file {
-		path => \"/root/.eCloud/nginx/logs/access_json.log\"
+		path => "/root/.eCloud/nginx/logs/access_json.log"
 			codec => json
-			start_position => \"beginning\"
-			type => \"nginxlog\"
+			start_position => "beginning"
+			type => "nginxlog"
 	}
 }
 output {
 	stdout { codec => rubydebug }
 	http {
-		http_method => \"post\"
-		url => \"${CTR_URL}/router\"
-		format => \"json\"
-		mapping => { \"uri\" => \"%{[request]}\" \"un\" => \"%{[un]}\" }
+		http_method => "post"
+		url => "http://10.4.7.1:10001/router"
+		format => "json"
+		mapping => {
+			"uri" => "%{[request]}"
+			"un" => "%{[un]}"
+			"hostname" => "%{[hostname]}"
+			"server_addr" => "%{[@source]}"
+			"remote_addr" => "%{[client]}"
+			"request_method" => "%{[request_method]}"
+			"scheme" => "%{[scheme]}"
+			"server_name" => "%{[domain]}"
+			"request_uri" => "%{[request]}"
+			"http_referer" => "%{[referer]}"
+			"args" => "%{[args]}"
+			"body_bytes_sent" => "%{[size]}"
+			"status" => "%{[status]}"
+			"request_time" => "%{[responsetime]}"
+			"upstream_response_time" => "%{[upstreamtime]}"
+			"upstream_addr" => "%{[upstreamaddr]}"
+			"https" => "%{[https]}"
+		}
 	}
 }
-" > "${ROOT_PATH}/logstash/logstash.conf"
+' > "${ROOT_PATH}/logstash/logstash.conf"
 cd "${ROOT_PATH}" && ./agent logstash

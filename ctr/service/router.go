@@ -50,6 +50,16 @@ func MarkHostAsRouter(user *model.User, rd *entity.MarkHostAsRouterRequestData) 
 	return http.StatusOK, res, err
 }
 
+func RouterRedo(user *model.User, rd *entity.RouterRedoRequestData) (int, []string, error) {
+	r, _ := model.RouterOne(map[string]interface{}{"id": *rd.RouterId})
+	h, _ := r.GetHostInfo()
+	res, err := DeployRouter(h)
+	if err != nil {
+		return http.StatusInternalServerError, nil, fmt.Errorf("重新部署router失败,err=%v", err)
+	}
+	return http.StatusOK, res, nil
+}
+
 func RouterList(user *model.User, rd *entity.RouterListRequestData) (int, []model.RouterInfo, error) {
 	res := make([]model.RouterInfo, 0)
 

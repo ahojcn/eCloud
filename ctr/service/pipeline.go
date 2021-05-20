@@ -45,7 +45,8 @@ func PipeLineCreate(user *model.User, rd *entity.PipeLineCreateRequestData) (int
 		TreeId:          *rd.TreeID,
 		ClusterId:       *rd.ClusterID,
 		ContainerImage:  rd.ContainerImage,
-		StatusMsg:       "初始化",
+		Status:          model.PipeLineStatusInit,
+		StatusMsg:       model.PipeLineStatusMsg[model.PipeLineStatusInit],
 		AliveMethod:     rd.AliveMethod,
 		AliveURI:        rd.AliveURI,
 		AliveReqQuery:   rd.AliveReqQuery,
@@ -66,22 +67,116 @@ func PipeLineRun(user *model.User, rd *entity.PipeLineRunRequestData) (int, stri
 		return http.StatusBadRequest, "", fmt.Errorf("没有id=%v的流水线信息", rd.Id)
 	}
 
+	if p.Status != model.PipeLineStatusInit {
+		pipelineReset(p)
+	}
+
+	p.ErrorLog += fmt.Sprintf("【用户（%s）执行了部署操作】%s", user.Username, time.Now().Format("2006-01-02 15:04:05"))
+	_ = model.PipeLineUpdate(p.Id, p)
+	handleErr := func(p *model.PipeLine, err error) {
+		p.ErrorLog = err.Error()
+		_ = model.PipeLineUpdate(p.Id, p)
+	}
+
 	hosts, err := BuildImage(p)
 	if err != nil {
-		return http.StatusInternalServerError, "", fmt.Errorf("流水线【构建镜像】失败，err=%v", err)
+		errLog := fmt.Errorf("流水线【构建镜像】失败，err=%v", err)
+		handleErr(p, errLog)
+		return http.StatusInternalServerError, "", errLog
 	}
 
 	containers, err := RunContainer(p, hosts)
 	if err != nil {
-		return http.StatusInternalServerError, "", fmt.Errorf("流水线【运行容器】失败，err=%v", err)
+		errLog := fmt.Errorf("流水线【运行容器】失败，err=%v", err)
+		handleErr(p, errLog)
+		return http.StatusInternalServerError, "", errLog
 	}
 
 	if err = AliveTest(p, containers); err != nil {
-		return http.StatusInternalServerError, "", fmt.Errorf("流水线【存活测试】失败，err=%v", err)
+		errLog := fmt.Errorf("流水线【存活测试】失败，err=%v", err)
+		handleErr(p, errLog)
+		return http.StatusInternalServerError, "", errLog
 	}
 
 	routerConfig := MakeRouter(p, containers)
 	return http.StatusOK, routerConfig, nil
+}
+
+func PipeLineReset(user *model.User, rd *entity.PipeLineStatusRequestData) (int, error) {
+	p, has := model.PipeLineOne(map[string]interface{}{"id": *rd.Id})
+	if !has {
+		return http.StatusBadRequest, fmt.Errorf("没有id=%d的流水线信息", *rd.Id)
+	}
+	p.ErrorLog += fmt.Sprintf("【用户（%s）执行了重置操作】%s", user.Username, time.Now().Format("2006-01-02 15:04:05"))
+	_ = model.PipeLineUpdate(p.Id, p)
+	if p.Status == model.PipeLineStatusInit || p.Status == model.PipeLineStatusError {
+		return http.StatusOK, nil
+	}
+	pipelineReset(p)
+	return http.StatusOK, nil
+}
+
+func pipelineReset(p *model.PipeLine) {
+	// 集群配置中当前容器数归 0
+	cluster, _ := model.ClusterOne(map[string]interface{}{"tree_id": p.ClusterId})
+	cluster.CurrentClusterNum = 0
+	_ = model.ClusterUpdateCols([]string{"current_cluster_num"}, cluster)
+
+	// 删除集群相关联的容器
+	clusterContainerList, _ := model.ClusterContainerList(map[string]interface{}{"cluster_id": cluster.Id})
+	for _, clusterContainer := range clusterContainerList {
+		container, _ := model.ContainerOne(map[string]interface{}{"id": clusterContainer.ContainerId})
+		err := model.ContainerDelete(container)
+		if err != nil {
+			continue
+		}
+		err = model.ClusterContainerDelete(&clusterContainer)
+		if err != nil {
+			continue
+		}
+	}
+
+	// 更新流水线状态
+	p.RouterIp = ""
+	p.RouterPort = 9999
+	p.Status = model.PipeLineStatusInit
+	p.StatusMsg = model.PipeLineStatusMsg[model.PipeLineStatusInit]
+	_ = model.PipeLineUpdate(p.Id, p)
+
+	// 删除接入层配置，重启接入层
+	serviceTree, _ := model.TreeOne(map[string]interface{}{"id": p.TreeId})
+	unSplit := strings.Split(serviceTree.Un, ".")
+	nsUn := unSplit[len(unSplit)-1]
+	namespaceTree, _ := model.TreeOne(map[string]interface{}{"un": nsUn})
+	r, _ := model.RouterOne(map[string]interface{}{"ns_id": namespaceTree.Id})
+	clusterTree, _ := model.TreeOne(map[string]interface{}{"id": p.ClusterId})
+	routerHost, _ := r.GetHostInfo()
+	ngx := nginx.New(routerHost)
+	ngx.ConfDelete(fmt.Sprintf("%s.conf", clusterTree.Un))
+	_ = ngx.Reload()
+}
+
+func PipeLineStatus(user *model.User, rd *entity.PipeLineStatusRequestData) (int, *entity.PipeLiseStatusResponseData, error) {
+	p, has := model.PipeLineOne(map[string]interface{}{"id": *rd.Id})
+	if !has {
+		return http.StatusBadRequest, nil, fmt.Errorf("没有id=%d的流水线信息", *rd.Id)
+	}
+	resp := new(entity.PipeLiseStatusResponseData)
+	resp.Steps = model.PipeLineStatusMsg
+	resp.Current = p.Status
+	resp.Content = model.PipeLineStatusContent
+	resp.Logs = p.ErrorLog
+	return http.StatusOK, resp, nil
+}
+
+func PipeLineDelete(user *model.User, rd *entity.PipeLineStatusRequestData) (int, error) {
+	p, has := model.PipeLineOne(map[string]interface{}{"id": *rd.Id})
+	if !has {
+		return http.StatusBadRequest, fmt.Errorf("没有id=%d的流水线信息", *rd.Id)
+	}
+	pipelineReset(p)
+	_ = model.PipeLineDelete(p)
+	return http.StatusOK, nil
 }
 
 func BuildImage(p *model.PipeLine) ([]model.Host, error) {
@@ -93,15 +188,21 @@ func BuildImage(p *model.PipeLine) ([]model.Host, error) {
 	if len(hostList) <= 0 {
 		return nil, fmt.Errorf("没有可用主机，请在资源中添加")
 	}
+
+	log := fmt.Sprintf("\n\n【选择资源（主机）并构建镜像】%s\n", time.Now().Format("2006-01-02 15:04:05"))
 	rand.Seed(time.Now().Unix())
 	cluster, _ := model.ClusterOne(map[string]interface{}{"tree_id": p.ClusterId})
 	pullImageCmd := fmt.Sprintf("docker pull %s", p.ContainerImage)
 	hostSelected := []model.Host{}
 	for i := cluster.CurrentClusterNum; i < cluster.ClusterNum; i++ {
 		hostIndex := rand.Intn(len(hostList))
-		_, _ = hostList[hostIndex].RunCmd(pullImageCmd, time.Duration(0))
+		res, _ := hostList[hostIndex].RunCmd(pullImageCmd, time.Duration(0))
 		hostSelected = append(hostSelected, hostList[hostIndex])
+		log += fmt.Sprintf("【%s（%s）】%s\n%s", hostList[hostIndex].IP, hostList[hostIndex].Description, pullImageCmd, res)
 	}
+
+	p.ErrorLog += log
+	_ = model.PipeLineUpdate(p.Id, p)
 
 	return hostSelected, nil
 }
@@ -113,6 +214,7 @@ func RunContainer(p *model.PipeLine, hosts []model.Host) ([]model.Container, err
 	cluster, _ := model.ClusterOne(map[string]interface{}{"tree_id": p.ClusterId})
 	containers := []model.Container{}
 
+	log := fmt.Sprintf("\n\n【运行容器】%s\n", time.Now().Format("2006-01-02 15:04:05"))
 	for _, host := range hosts {
 		hostPort := host.GetUnusedPort()
 		runContainerCmd := fmt.Sprintf("docker run -d -p %d:%d %s", hostPort, cluster.ContainerPort, p.ContainerImage)
@@ -132,15 +234,19 @@ func RunContainer(p *model.PipeLine, hosts []model.Host) ([]model.Container, err
 		_ = model.ContainerAdd(&container)
 		_ = model.ClusterContainerAdd(&model.ClusterContainer{ClusterId: cluster.Id, ContainerId: container.Id})
 		containers = append(containers, container)
+		log += fmt.Sprintf("【%s（%s）】%s\n%s\n", host.IP, host.Description, runContainerCmd, containerIdRes)
+		log += fmt.Sprintf("【%s（%s）】%s\n%s\n", host.IP, host.Description, containerIpCmd, ipRes)
 	}
 
+	p.ErrorLog += log
+	_ = model.PipeLineUpdate(p.Id, p)
 	return containers, nil
 }
 func AliveTest(p *model.PipeLine, containers []model.Container) error {
 	p.Status = model.PipeLineStatusAliveTest
 	p.StatusMsg = model.PipeLineStatusMsg[model.PipeLineStatusAliveTest]
-	_ = model.PipeLineUpdate(p.Id, p)
 
+	log := fmt.Sprintf("\n\n【存活测试】%s\n", time.Now().Format("2006-01-02 15:04:05"))
 	headers := http.Header{}
 	reqHeaders := map[string]string{}
 	_ = json.Unmarshal([]byte(p.AliveReqHeader), &reqHeaders)
@@ -166,8 +272,11 @@ func AliveTest(p *model.PipeLine, containers []model.Container) error {
 		if resp.StatusCode != p.AliveRespStatus {
 			return fmt.Errorf("存活测试失败：hostIP=%v, containerPort=%v", h.Id, container.HostPort)
 		}
+		log += fmt.Sprintf("%s %s\nresponse status code=%d\n", p.AliveMethod, host, resp.StatusCode)
 	}
 
+	p.ErrorLog += log
+	_ = model.PipeLineUpdate(p.Id, p)
 	return nil
 }
 func MakeRouter(p *model.PipeLine, containers []model.Container) string {
@@ -185,6 +294,9 @@ func MakeRouter(p *model.PipeLine, containers []model.Container) string {
 	routerHost, _ := r.GetHostInfo()
 
 	// 生成 nginx 配置，对应一个 cluster_un.conf
+	log := fmt.Sprintf("\n\n【接入层介入】%s\n", time.Now().Format("2006-01-02 15:04:05"))
+	log += fmt.Sprintf("router=>%s（%s）\n", routerHost.IP, routerHost.Description)
+
 	ngx := nginx.New(routerHost)
 	upstreamServer := make([]*gonginx.UpstreamServer, 0)
 	for _, c := range containers {
@@ -206,18 +318,24 @@ func MakeRouter(p *model.PipeLine, containers []model.Container) string {
 
 	proxyPass := &gonginx.Directive{Name: "proxy_pass",
 		Parameters: []string{fmt.Sprintf("http://%s_cluster", clusterTree.Un)}}
+	unDirective := &gonginx.Directive{
+		Name:       "set",
+		Parameters: []string{"$un", clusterTree.Un},
+	}
 	locationDirective := &gonginx.Directive{
 		Block: &gonginx.Block{
-			Directives: []gonginx.IDirective{proxyPass},
+			Directives: []gonginx.IDirective{proxyPass, unDirective},
 		},
 		Name:       "location",
 		Parameters: []string{"/"},
 	}
 
-	// todo 这里的监听端口没有保存，后面还要配置分流
+	listenPort := routerHost.GetUnusedPort()
+	p.RouterPort = listenPort
+	p.RouterIp = routerHost.IP
 	listenDirective := &gonginx.Directive{
 		Name:       "listen",
-		Parameters: []string{strconv.Itoa(routerHost.GetUnusedPort())},
+		Parameters: []string{strconv.Itoa(listenPort)},
 	}
 	servernameDirective := &gonginx.Directive{
 		Name:       "server_name",
@@ -237,9 +355,16 @@ func MakeRouter(p *model.PipeLine, containers []model.Container) string {
 	serverContent := gonginx.DumpDirective(server, gonginx.IndentedStyle)
 
 	content := fmt.Sprintf("%s\n%s", upstreamContent, serverContent)
-	ngx.ConfWrite(fmt.Sprintf("%s.conf", clusterTree.Un), content)
+	configFileName := fmt.Sprintf("%s.conf", clusterTree.Un)
+	ngx.ConfWrite(configFileName, content)
 
+	log += fmt.Sprintf("config file name=>%s\n%s\n重启接入层...\n", configFileName, content)
 	_ = ngx.Reload()
+	log += fmt.Sprintf("接入层重启完成\n")
+	_, _ = routerHost.RunCmd(
+		fmt.Sprintf("iptables -I INPUT -p tcp --dport %d -j ACCEPT", listenPort),
+		time.Duration(0))
+	p.ErrorLog += log
 	p.Status = model.PipeLineStatusRunning
 	p.StatusMsg = model.PipeLineStatusMsg[model.PipeLineStatusRunning]
 	_ = model.PipeLineUpdate(p.Id, p)

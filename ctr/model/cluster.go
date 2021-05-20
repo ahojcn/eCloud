@@ -12,18 +12,18 @@ type Cluster struct {
 
 type ClusterInfo struct {
 	Cluster
-	Containers []Container `json:"containers"`
+	Containers []ContainerInfo `json:"containers"`
 }
 
 func (c *Cluster) GetClusterInfo() *ClusterInfo {
 	result := &ClusterInfo{
 		Cluster:    *c,
-		Containers: make([]Container, 0),
+		Containers: make([]ContainerInfo, 0),
 	}
 	ccList, _ := ClusterContainerList(map[string]interface{}{"cluster_id": c.Id})
 	for _, cc := range ccList {
 		container, _ := ContainerOne(map[string]interface{}{"id": cc.ContainerId})
-		result.Containers = append(result.Containers, *container)
+		result.Containers = append(result.Containers, *container.GetContainerInfo())
 	}
 	return result
 }
@@ -51,6 +51,18 @@ func ClusterUpdate(id int64, c *Cluster) error {
 		return fmt.Errorf("update failed, affected = 0")
 	}
 	return err
+}
+
+func ClusterUpdateCols(cols []string, c *Cluster) error {
+	orm := GetMaster()
+	for _, col := range cols {
+		affected, err := orm.Cols(col).Update(c)
+		if affected == 0 {
+			return fmt.Errorf("update failed, affected = 0")
+		}
+		return err
+	}
+	return nil
 }
 
 func ClusterOne(cons map[string]interface{}) (*Cluster, bool) {

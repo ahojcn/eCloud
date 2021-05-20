@@ -2,6 +2,9 @@
   <div>
     <div v-if="show_router_info">
       <Card shadow title="接入层信息">
+        <template slot="extra">
+          <Button type="primary" icon="md-redo" @click="onRouterRedoBtnClick">重新部署接入层</Button>
+        </template>
         <Form :label-width="200">
           <FormItem label="主机信息">
             {{ router_info.host_info.username }}@{{ router_info.host_info.ip }}:{{ router_info.host_info.port }}
@@ -14,7 +17,7 @@
                     icon="md-arrow-forward"></Button>
             <br>
             <Alert type="info">
-              {{router_info.ns_info.description}}
+              {{ router_info.ns_info.description }}
             </Alert>
           </FormItem>
           <FormItem label="接入层状态">
@@ -63,7 +66,7 @@
 
 <script>
 import {apiGetTreeInfo} from "@/api/tree";
-import {apiGetRouterInfo, apiGetRouterStatus, apiRouterDeploy} from "@/api/m_router";
+import {apiGetRouterInfo, apiGetRouterStatus, apiRouterDeploy, apiRouterRedo} from "@/api/m_router";
 
 import SelectHost from "@/components/Host/SelectHost";
 
@@ -144,6 +147,23 @@ export default {
       apiGetRouterStatus({id: id}).then(res => {
         this.router_status = res.data
       })
+    },
+    onRouterRedoBtnClick() {
+      this.$Modal.confirm({
+        title: '此操作不可恢复，请谨慎操作',
+        content: '<p>1、删除所有router的配置文件 0</p>' +
+            '<p>2、删除所有相关联的pipeline</p>',
+        onOk: () => {
+          apiRouterRedo({router_id: this.router_info.router.id}).then(res => {
+            if (res.code === 200) {
+              this.refreshRouterInfo()
+            }
+          })
+        },
+        onCancel: () => {
+          this.$Message.info('已取消重置');
+        }
+      });
     },
   },
 }

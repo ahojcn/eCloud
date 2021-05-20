@@ -1,6 +1,6 @@
 <template>
   <Card shadow style="min-height: 100vh">
-    <Input suffix="ios-search" v-model="search_tree_input"></Input>
+    <Input suffix="ios-search" v-model="search_tree_input" clearable></Input>
     <Divider>
       服务树
       <Button type="text" icon="md-refresh" @click="refreshTree"></Button>

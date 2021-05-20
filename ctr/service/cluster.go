@@ -7,12 +7,27 @@ import (
 	"net/http"
 )
 
-func ClusterRetrieve(user *model.User, rd *entity.ClusterRetrieveRequestData) (int, *model.Cluster, error) {
+func ClusterRetrieve(user *model.User, rd *entity.ClusterRetrieveRequestData) (int, *model.ClusterInfo, error) {
 	c, has := model.ClusterOne(map[string]interface{}{"tree_id": *rd.TreeID})
 	if !has {
 		return http.StatusNotFound, nil, fmt.Errorf("不存在的集群配置")
 	}
-	return http.StatusOK, c, nil
+
+	return http.StatusOK, c.GetClusterInfo(), nil
+}
+
+func ClusterDelete(user *model.User, rd *entity.ClusterRetrieveRequestData) (int, error) {
+	c, has := model.ClusterOne(map[string]interface{}{"tree_id": *rd.TreeID})
+	if !has {
+		return http.StatusNotFound, fmt.Errorf("不存在的集群配置")
+	}
+
+	err := model.ClusterDelete(c)
+	if err != nil {
+		return http.StatusInternalServerError, fmt.Errorf("删除集群配置失败,err=%v", err)
+	}
+
+	return http.StatusOK, nil
 }
 
 func ClusterCreate(user *model.User, rd *entity.ClusterCreateRequestData) (int, *model.Cluster, error) {

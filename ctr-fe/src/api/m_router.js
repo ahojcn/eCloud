@@ -18,6 +18,15 @@ export function apiRouterDeploy(data) {
     })
 }
 
+// 重新部署接入层
+export function apiRouterRedo(data) {
+    return request({
+        url: 'm_router/redo',
+        method: 'post',
+        data
+    })
+}
+
 // 获取接入层状态
 export function apiGetRouterStatus(params) {
     return request({

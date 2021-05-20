@@ -53,6 +53,29 @@ func ClusterCreate(c *gin.Context) {
 	g.response(http.StatusOK, "创建集群配置成功", res)
 }
 
+func ClusterDelete(c *gin.Context) {
+	g := newGin(c)
+	user, err := g.loginRequired()
+	if err != nil {
+		g.response(http.StatusUnauthorized, "未登录", err)
+		return
+	}
+
+	rd := new(entity.ClusterRetrieveRequestData)
+	if err = c.ShouldBindQuery(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	status, err := service.ClusterDelete(user, rd)
+	if err != nil {
+		g.response(status, "删除集群配置信息失败", err)
+		return
+	}
+
+	g.response(http.StatusOK, "删除集群配置信息成功", nil)
+}
+
 func ClusterList(c *gin.Context) {
 	g := newGin(c)
 	user, err := g.loginRequired()

@@ -5,6 +5,10 @@ type MarkHostAsRouterRequestData struct {
 	HostId *int64 `json:"host_id" binding:"required,gt=0" label:"主机id"`
 }
 
+type RouterRedoRequestData struct {
+	RouterId *int64 `json:"router_id" binding:"required,gt=0" label:"接入层id"`
+}
+
 type RouterListRequestData struct {
 	Id     *int64 `form:"id" binding:"omitempty,gt=0" label:"id"`
 	NsId   *int64 `form:"ns_id" binding:"omitempty,gt=0" label:"ns节点id"`

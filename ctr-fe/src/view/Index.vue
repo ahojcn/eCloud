@@ -19,7 +19,7 @@
               </MenuItem>
             </MenuGroup>
           </Submenu>
-          <MenuItem name="monitor">
+          <MenuItem name="monitor" :to="{name: 'Monitor'}">
             <Icon type="ios-stats"/>
             监控
           </MenuItem>

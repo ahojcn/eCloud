@@ -23,6 +23,7 @@ import Deploy from "@/view/Deploy";
 import RouterInfo from '@/view/Deploy/RouterInfo'
 import Cai from "@/view/Cai";
 import PipeLine from "@/view/Deploy/PipeLine";
+import Monitor from "@/view/Monitor";
 
 Vue.use(VueRouter);
 
@@ -76,6 +77,12 @@ let router = new VueRouter({
                             meta: {title: '节点详情'}
                         },
                     ]
+                },
+                {
+                    name: 'Monitor',
+                    path: '/monitor',
+                    component: Monitor,
+                    meta: {title: '监控'},
                 },
                 {
                     name: 'Deploy',

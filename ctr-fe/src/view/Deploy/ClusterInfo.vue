@@ -2,7 +2,7 @@
   <div>
     <Card title="集群配置" style="min-height: 100vh">
       <template slot="extra">
-        <Button type="error" icon="md-delete" @click="onClusterDeleteBtnClick">删除集群配置</Button>
+        <Button type="error" icon="md-trash" @click="onClusterDeleteBtnClick">删除集群配置</Button>
       </template>
       <div v-if="show_create_cluster_form === true">
         <Alert type="error">

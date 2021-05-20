@@ -6,6 +6,7 @@ import (
 	"github.com/ahojcn/ecloud/ctr/model"
 	"github.com/ahojcn/ecloud/ctr/service"
 	"github.com/ahojcn/ecloud/ctr/service/nginx"
+	client "github.com/influxdata/influxdb1-client/v2"
 	"github.com/tufanbarisyildirim/gonginx"
 	"github.com/tufanbarisyildirim/gonginx/parser"
 	"strings"
@@ -107,10 +108,27 @@ func testPipeLineRun() {
 	fmt.Println(service.PipeLineRun(user, &rd))
 }
 
+func testRouterMonitorQuery() {
+	cmd := "show series from router_logstash;"
+	q := client.Query{Command: cmd, Database: "ecloud_monitor"}
+	cli := model.GetInfluxDB()
+	response, _ := cli.Query(q)
+
+	resp := map[string][]string{}
+	for _, v := range response.Results[0].Series[0].Values {
+		ss := strings.Split(v[0].(string), ",")
+		k := strings.Split(ss[1], "=")[1]
+		vv := strings.Split(ss[2], "=")[1]
+		resp[k] = append(resp[k], vv)
+	}
+	fmt.Println(resp)
+}
+
 func main() {
 	//testMyNginx()
 	//testGoNginxUpstream()
 	//testRunContainer()
 	//testGoNginxServer()
-	testPipeLineRun()
+	//testPipeLineRun()
+	testRouterMonitorQuery()
 }

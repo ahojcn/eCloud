@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/service"
@@ -42,10 +41,48 @@ func MonitorQueryMetrics(c *gin.Context) {
 	g.response(http.StatusOK, "ok", res)
 }
 
-func RouterWriteMetrics(c *gin.Context) {
-	j := make(map[string]interface{})
-	c.BindJSON(&j)
-	jj, err := json.Marshal(j)
-	fmt.Println(string(jj), err)
-	c.JSON(http.StatusOK, nil)
+func RouterMonitorMetricsGet(c *gin.Context) {
+	g := newGin(c)
+
+	res, err := service.RouterMonitorMetricsGet()
+	if err != nil {
+		g.response(http.StatusInternalServerError, "查询出错", err)
+		return
+	}
+
+	g.response(http.StatusOK, "ok", res)
+}
+
+func RouterMonitorMetricsWrite(c *gin.Context) {
+	g := newGin(c)
+	rd := entity.RouterWriteMetricsRequestData{}
+	if err := c.ShouldBindJSON(&rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+	}
+
+	data := map[string]interface{}{}
+	data["status"], _ = strconv.Atoi(rd["status"])
+	data["request_time"], _ = strconv.ParseFloat(rd["request_time"], 64)
+	data["upstream_response_time"], _ = strconv.ParseFloat(rd["upstream_response_time"], 64)
+	go service.RouterMonitorMetricsWrite(rd["un"], rd["uri"], data)
+
+	g.response(http.StatusOK, "ok", nil)
+}
+
+func RouterMonitorMetricsQuery(c *gin.Context) {
+	g := newGin(c)
+
+	rd := new(entity.RouterMonitorMetricsQueryRequestData)
+	if err := c.ShouldBindQuery(rd); err != nil {
+		g.response(http.StatusBadRequest, "参数错误", err)
+		return
+	}
+
+	res, err := service.RouterMonitorMetricsQuery(rd)
+	if err != nil {
+		g.response(http.StatusInternalServerError, "查询出错", err)
+		return
+	}
+
+	g.response(http.StatusOK, "ok", res)
 }

@@ -78,11 +78,20 @@ func RouterMonitorMetricsQuery(c *gin.Context) {
 		return
 	}
 
-	res, err := service.RouterMonitorMetricsQuery(rd)
+	if *rd.Overview == true {
+		res1, err := service.RouterMonitorMetricsQueryOverview(rd)
+		if err != nil {
+			g.response(http.StatusInternalServerError, "查询出错", err)
+			return
+		}
+		g.response(http.StatusOK, "ok", res1)
+		return
+	}
+
+	res2, err := service.RouterMonitorMetricsQuery(rd)
 	if err != nil {
 		g.response(http.StatusInternalServerError, "查询出错", err)
 		return
 	}
-
-	g.response(http.StatusOK, "ok", res)
+	g.response(http.StatusOK, "ok", res2)
 }

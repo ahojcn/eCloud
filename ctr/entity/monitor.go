@@ -22,4 +22,5 @@ type RouterMonitorMetricsQueryRequestData struct {
 	Metrics  *string `form:"metrics" binding:"required" label:"metrics"`
 	FromTime *string `form:"from_time" binding:"required" label:"开始时间"`
 	ToTime   *string `form:"to_time" binding:"required" label:"开始时间"`
+	Overview *bool   `form:"overview" binding:"required" label:"是否获取预览数据"`
 }

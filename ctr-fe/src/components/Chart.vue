@@ -1,5 +1,5 @@
 <template>
-  <div class="container" id="container"></div>
+  <div style="width: 100%; height: 100%" class="container" :id="id"></div>
 </template>
 
 <script>
@@ -15,6 +15,13 @@ export default {
         return {}
       },
     },
+    id: {
+      required: true,
+      type: String,
+      default() {
+        return 'container'
+      }
+    },
   },
   data() {
     return {
@@ -22,7 +29,7 @@ export default {
     }
   },
   mounted() {
-    this.chart = echarts.init(document.getElementById('container'), "light")
+    this.chart = echarts.init(document.getElementById(this.id), "light")
     this.chart.setOption(this.$props.options)
     this.chart.resize()
   },
@@ -35,6 +42,11 @@ export default {
       },
       deep: true
     }
+  },
+  methods: {
+    resize() {
+      this.chart.resize()
+    },
   }
 }
 </script>

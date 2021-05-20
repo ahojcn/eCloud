@@ -130,5 +130,11 @@ func main() {
 	//testRunContainer()
 	//testGoNginxServer()
 	//testPipeLineRun()
-	testRouterMonitorQuery()
+	//testRouterMonitorQuery()
+
+	cmd := "select distinct(status) from router_logstash where uri='/' and un='test-1.testsvc.frontend.xiaoniu.zhieasy';"
+	q := client.Query{Command: cmd, Database: "ecloud_monitor"}
+	cli := model.GetInfluxDB()
+	response, _ := cli.Query(q)
+	fmt.Println(response.Results[0].Series[0].Values)
 }

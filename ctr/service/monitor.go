@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"strconv"
@@ -120,6 +121,46 @@ func RouterMonitorMetricsQuery(rd *entity.RouterMonitorMetricsQueryRequestData) 
 	return res, nil
 }
 
+func RouterMonitorMetricsQueryOverview(rd *entity.RouterMonitorMetricsQueryRequestData) (res []map[string]interface{}, err error) {
+	cli := model.GetInfluxDB()
+	cmd := fmt.Sprintf(
+		"select distinct(status) from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s';",
+		*rd.Uri, *rd.Un,
+		*rd.FromTime, *rd.ToTime,
+	)
+	q := client.Query{Command: cmd, Database: "ecloud_monitor"}
+	response, err := cli.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	if response.Error() != nil {
+		return nil, response.Error()
+	}
+
+	for _, row := range response.Results[0].Series[0].Values {
+		cmd = fmt.Sprintf(
+			"select count(*) from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s' and status=%v;",
+			*rd.Uri, *rd.Un,
+			*rd.FromTime, *rd.ToTime,
+			row[1],
+		)
+		q.Command = cmd
+		rr, err := cli.Query(q)
+		if err != nil {
+			return nil, err
+		}
+		if rr.Error() != nil {
+			return nil, rr.Error()
+		}
+		mm := map[string]interface{}{}
+		mm["value"] = rr.Results[0].Series[0].Values[0][1]
+		mm["name"] = row[1].(json.Number).String()
+		res = append(res, mm)
+	}
+
+	return res, nil
+}
+
 func getRouterMonitorMetricsQueryCmd(rd *entity.RouterMonitorMetricsQueryRequestData) (cmd string) {
 	cmd = fmt.Sprintf(
 		"select %s from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s'",
@@ -129,5 +170,3 @@ func getRouterMonitorMetricsQueryCmd(rd *entity.RouterMonitorMetricsQueryRequest
 	)
 	return
 }
-
-

@@ -25,10 +25,11 @@
               <span style="color: red">{{ datetime }}</span>
             </FormItem>
           </Form>
+          <Chart ref="overview_chart" style="height: 300px" :options="overview_chart_options" id="overview"></Chart>
         </Card>
       </Col>
       <Col :span="18">
-        <Chart :options="chart_options"></Chart>
+        <Chart ref="detail_chart" :options="chart_options" id="detail"></Chart>
       </Col>
     </Row>
   </div>
@@ -124,7 +125,6 @@ export default {
         },
         series: [],
       },
-
       chart_options: {
         title: {
           text: '监控图',
@@ -196,6 +196,62 @@ export default {
         },
         series: [],
       },
+      overview_chart_options_raw: {
+        title: {
+          text: '概览',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+        },
+        series: [
+          {
+            name: '请求状态码',
+            type: 'pie',
+            radius: '50%',
+            data: [],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      },
+      overview_chart_options: {
+        title: {
+          text: '概览',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+        },
+        series: [
+          {
+            name: '请求状态码',
+            type: 'pie',
+            radius: '50%',
+            data: [],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      },
     }
   },
   computed: {
@@ -217,7 +273,6 @@ export default {
   mounted() {
     apiGetRouterMetrics().then(res => {
       if (res.code === 200) {
-        console.log(res)
         this.raw_resp = res.data
       }
     })
@@ -228,13 +283,13 @@ export default {
       this.chart_options.series.length = 0
       this.chart_options.title.text = JSON.stringify(this.query_selected)
       for (let i = 0; i < this.query_selected.length; i++) {
-        console.log(this.query_selected[i])
         apiQueryRouterMetrics({
           un: this.selected[0],
           uri: this.selected[1],
           metrics: this.query_selected[i],
           from_time: this.datetime[0],
-          to_time: this.datetime[1]
+          to_time: this.datetime[1],
+          overview: false,
         }).then(res => {
           this.chart_options.series.push({
             type: "line",
@@ -244,6 +299,18 @@ export default {
           this.chart_options.legend.data.push(this.query_selected[i])
         })
       }
+
+      // 获取 overview 数据
+      apiQueryRouterMetrics({
+        un: this.selected[0],
+        uri: this.selected[1],
+        metrics: "",
+        from_time: this.datetime[0],
+        to_time: this.datetime[1],
+        overview: true,
+      }).then(res => {
+        this.overview_chart_options.series[0].data = res.data
+      });
     },
   },
 }

@@ -19,6 +19,7 @@ type RouterWriteMetricsRequestData map[string]string
 type RouterMonitorMetricsQueryRequestData struct {
 	Un       *string `form:"un" binding:"required" label:"服务树的unique name"`
 	Uri      *string `form:"uri" binding:"required" label:"uri"`
+	Docker   *string `form:"docker" binding:"required" label:"docker"`
 	Metrics  *string `form:"metrics" binding:"required" label:"metrics"`
 	FromTime *string `form:"from_time" binding:"required" label:"开始时间"`
 	ToTime   *string `form:"to_time" binding:"required" label:"开始时间"`

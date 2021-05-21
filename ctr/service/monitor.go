@@ -61,7 +61,7 @@ func MonitorMetricsQuery(hostId int64, metrics string, cols []string, fromTime, 
 	return res, nil
 }
 
-func RouterMonitorMetricsGet() (map[string][]string, error) {
+func RouterMonitorMetricsGet() (map[string]map[string][]string, error) {
 	cmd := "show series from router_logstash;"
 	q := client.Query{Command: cmd, Database: "ecloud_monitor"}
 	cli := model.GetInfluxDB()
@@ -70,17 +70,20 @@ func RouterMonitorMetricsGet() (map[string][]string, error) {
 		return nil, err
 	}
 
-	resp := map[string][]string{}
+	resp := map[string]map[string][]string{}
+	uriMap := map[string][]string{}
 	for _, v := range response.Results[0].Series[0].Values {
 		ss := strings.Split(v[0].(string), ",")
-		k := strings.Split(ss[1], "=")[1]
-		vv := strings.Split(ss[2], "=")[1]
-		resp[k] = append(resp[k], vv)
+		docker := strings.Split(ss[1], "=")[1]
+		un := strings.Split(ss[2], "=")[1]
+		uri := strings.Split(ss[3], "=")[1]
+		uriMap[uri] = append(uriMap[uri], docker)
+		resp[un] = uriMap
 	}
 	return resp, nil
 }
 
-func RouterMonitorMetricsWrite(un string, uri string, data map[string]interface{}) {
+func RouterMonitorMetricsWrite(un string, uri string, upstreamAddr string, data map[string]interface{}) {
 	cli := model.GetInfluxDB()
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
 		Precision: "s",
@@ -90,7 +93,7 @@ func RouterMonitorMetricsWrite(un string, uri string, data map[string]interface{
 		fmt.Printf("influx db write failed: %v\n", err)
 	}
 
-	tags := map[string]string{"un": un, "uri": uri}
+	tags := map[string]string{"un": un, "uri": uri, "docker": upstreamAddr}
 	fields := data
 	pt, _ := client.NewPoint("router_logstash", tags, fields, time.Now())
 	bp.AddPoint(pt)
@@ -104,7 +107,6 @@ func RouterMonitorMetricsQuery(rd *entity.RouterMonitorMetricsQueryRequestData) 
 	cli := model.GetInfluxDB()
 
 	cmd := getRouterMonitorMetricsQueryCmd(rd)
-	fmt.Println(cmd)
 
 	q := client.Query{
 		Command:  cmd,
@@ -123,11 +125,20 @@ func RouterMonitorMetricsQuery(rd *entity.RouterMonitorMetricsQueryRequestData) 
 
 func RouterMonitorMetricsQueryOverview(rd *entity.RouterMonitorMetricsQueryRequestData) (res []map[string]interface{}, err error) {
 	cli := model.GetInfluxDB()
-	cmd := fmt.Sprintf(
-		"select distinct(status) from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s';",
-		*rd.Uri, *rd.Un,
-		*rd.FromTime, *rd.ToTime,
-	)
+	cmd := ""
+	if *rd.Docker == "all" {
+		cmd = fmt.Sprintf(
+			"select distinct(status) from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s';",
+			*rd.Uri, *rd.Un,
+			*rd.FromTime, *rd.ToTime,
+		)
+	} else {
+		cmd = fmt.Sprintf(
+			"select distinct(status) from router_logstash where uri='%s' and un='%s' and docker='%s' and time >= '%s' and time <= '%s';",
+			*rd.Uri, *rd.Un, *rd.Docker,
+			*rd.FromTime, *rd.ToTime,
+		)
+	}
 	q := client.Query{Command: cmd, Database: "ecloud_monitor"}
 	response, err := cli.Query(q)
 	if err != nil {
@@ -138,12 +149,21 @@ func RouterMonitorMetricsQueryOverview(rd *entity.RouterMonitorMetricsQueryReque
 	}
 
 	for _, row := range response.Results[0].Series[0].Values {
-		cmd = fmt.Sprintf(
-			"select count(*) from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s' and status=%v;",
-			*rd.Uri, *rd.Un,
-			*rd.FromTime, *rd.ToTime,
-			row[1],
-		)
+		if *rd.Docker == "all" {
+			cmd = fmt.Sprintf(
+				"select count(*) from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s' and status=%v;",
+				*rd.Uri, *rd.Un,
+				*rd.FromTime, *rd.ToTime,
+				row[1],
+			)
+		} else {
+			cmd = fmt.Sprintf(
+				"select count(*) from router_logstash where uri='%s' and un='%s' and docker='%s' and time >= '%s' and time <= '%s' and status=%v;",
+				*rd.Uri, *rd.Un, *rd.Docker,
+				*rd.FromTime, *rd.ToTime,
+				row[1],
+			)
+		}
 		q.Command = cmd
 		rr, err := cli.Query(q)
 		if err != nil {
@@ -162,11 +182,20 @@ func RouterMonitorMetricsQueryOverview(rd *entity.RouterMonitorMetricsQueryReque
 }
 
 func getRouterMonitorMetricsQueryCmd(rd *entity.RouterMonitorMetricsQueryRequestData) (cmd string) {
-	cmd = fmt.Sprintf(
-		"select %s from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s'",
-		*rd.Metrics,
-		*rd.Uri, *rd.Un,
-		*rd.FromTime, *rd.ToTime,
-	)
+	if *rd.Docker == "all" {
+		cmd = fmt.Sprintf(
+			"select %s from router_logstash where uri='%s' and un='%s' and time >= '%s' and time <= '%s'",
+			*rd.Metrics,
+			*rd.Uri, *rd.Un,
+			*rd.FromTime, *rd.ToTime,
+		)
+	} else {
+		cmd = fmt.Sprintf(
+			"select %s from router_logstash where uri='%s' and un='%s' and docker='%s' and time >= '%s' and time <= '%s'",
+			*rd.Metrics,
+			*rd.Uri, *rd.Un, *rd.Docker,
+			*rd.FromTime, *rd.ToTime,
+		)
+	}
 	return
 }

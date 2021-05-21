@@ -48,9 +48,12 @@ export default {
           "drop_out", "fifo_in", "fifo_out"
         ]
       },
-      cols_selected: [],
-      datetime: [new Date('2021-04-14T10:32:00+08:00'), new Date('2021-04-14T10:33:00+08:00')],
+      cols_selected: ['percent'],
+      datetime: [new Date('2021-04-10T10:32:00+08:00'), new Date('2021-04-26T10:33:00+08:00')],
     }
+  },
+  mounted() {
+    this.$emit('onMonitorMetricsSelected', this.metrics_selected, this.cols_selected, this.datetime[0], this.datetime[1])
   },
   methods: {
     onClickTab(name) {

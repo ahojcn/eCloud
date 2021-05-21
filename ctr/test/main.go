@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ahojcn/ecloud/ctr/entity"
 	"github.com/ahojcn/ecloud/ctr/model"
@@ -114,14 +115,34 @@ func testRouterMonitorQuery() {
 	cli := model.GetInfluxDB()
 	response, _ := cli.Query(q)
 
-	resp := map[string][]string{}
+	/*
+		{
+			"test-1": [
+				{
+					"/": [
+						"10.4.7.12:10002",
+						"10.4.7.12:10003",
+					],
+					"/hello": [
+						"10.4.7.12:10002",
+						"10.4.7.12:10003",
+					]
+				}
+			]
+		}
+	*/
+	resp := map[string]map[string][]string{}
+	uriMap := map[string][]string{}
 	for _, v := range response.Results[0].Series[0].Values {
 		ss := strings.Split(v[0].(string), ",")
-		k := strings.Split(ss[1], "=")[1]
-		vv := strings.Split(ss[2], "=")[1]
-		resp[k] = append(resp[k], vv)
+		docker := strings.Split(ss[1], "=")[1]
+		un := strings.Split(ss[2], "=")[1]
+		uri := strings.Split(ss[3], "=")[1]
+		uriMap[uri] = append(uriMap[uri], docker)
+		resp[un] = uriMap
 	}
-	fmt.Println(resp)
+	b, _ := json.Marshal(resp)
+	fmt.Println(string(b))
 }
 
 func main() {

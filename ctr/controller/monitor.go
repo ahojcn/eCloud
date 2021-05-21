@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -60,11 +61,12 @@ func RouterMonitorMetricsWrite(c *gin.Context) {
 		g.response(http.StatusBadRequest, "参数错误", err)
 	}
 
+	fmt.Println(rd)
 	data := map[string]interface{}{}
 	data["status"], _ = strconv.Atoi(rd["status"])
 	data["request_time"], _ = strconv.ParseFloat(rd["request_time"], 64)
 	data["upstream_response_time"], _ = strconv.ParseFloat(rd["upstream_response_time"], 64)
-	go service.RouterMonitorMetricsWrite(rd["un"], rd["uri"], data)
+	go service.RouterMonitorMetricsWrite(rd["un"], rd["uri"], rd["upstream_addr"], data)
 
 	g.response(http.StatusOK, "ok", nil)
 }

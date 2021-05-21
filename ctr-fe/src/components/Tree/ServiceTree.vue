@@ -46,6 +46,7 @@ export default {
       apiGetTreeInfo().then(res => {
         if (res.code === 200) {
           this.tree = res.data
+          console.log(this.tree)
         }
       })
     },
@@ -97,7 +98,7 @@ export default {
             return i
           } else {
             if (this.searchTreeAndSelect(tree_node[i].children, val) !== undefined) {
-              this.$set(tree_node[i], 'selected', true)
+              this.$set(tree_node[i], 'selected', false)
               this.$set(tree_node[i], 'expand', true)
               return i
             } else {

@@ -148,7 +148,6 @@ export default {
     getData() {
       apiGetPipeLineList({tree_id: this.tree_id}).then(res => {
         this.d = res.data
-        console.log(res.data)
       })
     },
     onAliveDetailBtnClick(row) {

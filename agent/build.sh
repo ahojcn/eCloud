@@ -18,7 +18,7 @@ echo "go build done, push ${BINPATH} to gitee"
 
 cd ${BINPATH} && cp ../*.sh ./
 
-#git status
-#git add .
-#git commit -m "$(date "+%Y-%m-%d %H:%M:%S")"
-#git push origin master
+git status
+git add .
+git commit -m "$(date "+%Y-%m-%d %H:%M:%S")"
+git push origin master

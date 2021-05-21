@@ -60,14 +60,19 @@ func CreateService(user *model.User, rd *entity.CreateServiceRequestData) (int, 
 	}
 
 	count := 0
+	clusterCount := 0
 	for _, i := range flowMap {
 		count += i
+		clusterCount += 1
 	}
 	if count != 100 {
 		return http.StatusBadRequest, "", fmt.Errorf("预案配置错误，流量比例和不得超过100，当前：%v", count)
 	}
+	if clusterCount != len(pipelineList) {
+		return http.StatusBadRequest, "", fmt.Errorf("存在未创建的流水线")
+	}
 
-	userTree, has := model.UserTreeOne(map[string]interface{}{"tree_id": serviceTree.Id, "user_id": user.Id})
+		userTree, has := model.UserTreeOne(map[string]interface{}{"tree_id": serviceTree.Id, "user_id": user.Id})
 	if !has {
 		return http.StatusUnauthorized, "", fmt.Errorf("没有权限")
 	}

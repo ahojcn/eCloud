@@ -4,7 +4,14 @@
             @click="show_service_config_add_model = true">新增预案
     </Button>
 
-    <Card v-else title="预案配置">
+    <Card v-else>
+      <template slot="title">
+        <h3>
+          预案配置
+          <Tag color="green">ip={{ service_info.router_ip }}</Tag>
+          <Tag color="red">port={{ service_info.router_port }}</Tag>
+        </h3>
+      </template>
       <template slot="extra">
         <Button type="error" :disabled="show_service_config===false" @click="onDeleteServiceConfigBtnClick">删除预案
         </Button>
@@ -165,7 +172,7 @@ export default {
         return
       }
 
-      apiCreateService({tree_id: this.tree_id, flow_map: JSON.stringify(d)}).then(res=>{
+      apiCreateService({tree_id: this.tree_id, flow_map: JSON.stringify(d)}).then(res => {
         if (res.code === 200) {
           this.getData()
           this.$emit('onCreateServiceConfigOk')

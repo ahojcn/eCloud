@@ -132,14 +132,17 @@ func testRouterMonitorQuery() {
 		}
 	*/
 	resp := map[string]map[string][]string{}
-	uriMap := map[string][]string{}
 	for _, v := range response.Results[0].Series[0].Values {
 		ss := strings.Split(v[0].(string), ",")
 		docker := strings.Split(ss[1], "=")[1]
 		un := strings.Split(ss[2], "=")[1]
 		uri := strings.Split(ss[3], "=")[1]
-		uriMap[uri] = append(uriMap[uri], docker)
-		resp[un] = uriMap
+		if _, ok := resp[un]; !ok {
+			resp[un] = map[string][]string{}
+			resp[un][uri] = append(resp[un][uri], docker)
+		} else {
+			resp[un][uri] = append(resp[un][uri], docker)
+		}
 	}
 	b, _ := json.Marshal(resp)
 	fmt.Println(string(b))
@@ -151,7 +154,7 @@ func main() {
 	//testRunContainer()
 	//testGoNginxServer()
 	//testPipeLineRun()
-	testRouterMonitorQuery()
+	//testRouterMonitorQuery()
 
 	//cmd := "select distinct(status) from router_logstash where uri='/' and un='test-1.testsvc.frontend.xiaoniu.zhieasy';"
 	//q := client.Query{Command: cmd, Database: "ecloud_monitor"}

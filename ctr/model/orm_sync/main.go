@@ -24,6 +24,7 @@ func main() {
 		new(model.HostUser), new(model.Host), new(model.ICode),
 		new(model.Router),
 		new(model.Cluster), new(model.PipeLine), new(model.Container), new(model.ClusterContainer),
+		new(model.Service),
 	)
 	if err != nil {
 		panic(err)

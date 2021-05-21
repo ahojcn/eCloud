@@ -270,7 +270,7 @@ export default {
   },
   methods: {
     onRouterMonitorMetricsBtnClick(animation) {
-      if (this.selected.length !== 3 || this.query_selected.length !== 2) {
+      if (this.selected.length !== 3 || this.query_selected.length === 0) {
         this.$Message.error('请按照要求选择一级指标和二级指标')
         return
       }

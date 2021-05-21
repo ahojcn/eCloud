@@ -1,6 +1,9 @@
 <template>
   <div>
     <Card shadow title="添加主机" style="min-height: 100vh">
+      <template slot="extra">
+        <Button type="primary" @click="onAddHostBtnClick">添加</Button>
+      </template>
       <Form :label-width="80">
         <FormItem label="描述">
           <Input v-model="form.description" type="textarea" show-word-limit maxlength="1024"
@@ -19,9 +22,6 @@
           <InputNumber v-model="form.port" :min="1" :max="65534" placeholder="ssh端口号"></InputNumber>
         </FormItem>
       </Form>
-      <div slot="footer">
-        <Button type="primary" long @click="onAddHostBtnClick">添加</Button>
-      </div>
     </Card>
   </div>
 </template>

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -61,7 +60,6 @@ func RouterMonitorMetricsWrite(c *gin.Context) {
 		g.response(http.StatusBadRequest, "参数错误", err)
 	}
 
-	fmt.Println(rd)
 	data := map[string]interface{}{}
 	data["status"], _ = strconv.Atoi(rd["status"])
 	data["request_time"], _ = strconv.ParseFloat(rd["request_time"], 64)

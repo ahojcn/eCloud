@@ -43,9 +43,8 @@ export default {
   methods: {
     handleRegisterBtnClick() {
       register(this.form).then(res => {
-        console.log(res)
         if (res.code === 200) {
-          alert("ok")
+          this.$router.push('/')
         }
       })
     }

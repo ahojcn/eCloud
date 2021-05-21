@@ -91,5 +91,10 @@ func SetupRouter() *gin.Engine {
 	Router.POST("/cluster/create", controller.ClusterCreate)
 	Router.GET("/cluster/list", controller.ClusterList)
 
+	// Service
+	Router.POST("/service/create", controller.ServiceCreate)
+	Router.GET("/service/one", controller.ServiceGet)
+	Router.GET("/service/delete", controller.ServiceDelete)
+
 	return Router
 }

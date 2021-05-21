@@ -1,5 +1,7 @@
 <template>
   <div>
+    <ServiceConfig :tree_id="parseInt($route.query.id)"></ServiceConfig>
+
     <Card style="min-height: 100vh">
       <template slot="title">
         <h3>
@@ -25,10 +27,11 @@
 <script>
 import PipeLineList from "@/components/PipeLine/List";
 import PipeLineCreate from "@/components/PipeLine/Create";
+import ServiceConfig from "@/components/Service/ServiceConfig";
 
 export default {
   name: "PipeLine",
-  components: {PipeLineCreate, PipeLineList},
+  components: {ServiceConfig, PipeLineCreate, PipeLineList},
   data() {
     return {
       show_create_pipeline_modal: false,

@@ -12,12 +12,15 @@ type Cluster struct {
 
 type ClusterInfo struct {
 	Cluster
+	TreeInfo   *Tree           `json:"tree_info"`
 	Containers []ContainerInfo `json:"containers"`
 }
 
 func (c *Cluster) GetClusterInfo() *ClusterInfo {
+	t, _ := TreeOne(map[string]interface{}{"id": c.TreeId})
 	result := &ClusterInfo{
 		Cluster:    *c,
+		TreeInfo:   t,
 		Containers: make([]ContainerInfo, 0),
 	}
 	ccList, _ := ClusterContainerList(map[string]interface{}{"cluster_id": c.Id})

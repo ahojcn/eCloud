@@ -2,7 +2,7 @@
   <div>
     <Table :data="d" :columns="columns">
       <template slot-scope="scope" slot="tree">
-        {{ scope.row.tree_info.un }}
+        {{ scope.row.cluster_info.tree_info.un }}
       </template>
       <template slot-scope="scope" slot="cluster_info">
         {{ scope.row.cluster_info.current_cluster_num }} / {{ scope.row.cluster_info.cluster_num }}
@@ -20,7 +20,8 @@
         </p>
       </template>
       <template slot="detail" slot-scope="scope">
-        <Button long size="small" icon="ios-information-circle" type="primary" @click="onAliveDetailBtnClick(scope.row)">
+        <Button long size="small" icon="ios-information-circle" type="primary"
+                @click="onAliveDetailBtnClick(scope.row)">
           存活检测信息
         </Button>
         <br>
@@ -63,7 +64,7 @@
         </FormItem>
       </Form>
     </Modal>
-    <Drawer v-model="show_pipeline_run_drawer" width="100" :mask-closable="false">
+    <Drawer v-model="show_pipeline_run_drawer" width="100" :mask-closable="false" @on-close="onDrawerClose">
       <template slot="header">
         <Button type="success" icon="md-play" style="text-align: center" @click="onRunPipeLineDrawerBtnClick">
           执行
@@ -72,6 +73,9 @@
                 @click="refreshPipeLineStatus(pipeline_run.id)">
           刷新
         </Button>
+        <Tooltip :content="auto_refresh===true?'关闭自动刷新':'打开自动刷新'">
+          <i-switch v-model="auto_refresh" @on-change="onAutoRefreshChange"></i-switch>
+        </Tooltip>
       </template>
       <Row :gutter="20">
         <Col :span="6">
@@ -127,6 +131,9 @@ export default {
       pipeline_run: {},
       pipeline_status: {},
       show_pipeline_run_drawer: false,
+
+      auto_refresh: false,
+      auto_refresh_id: null,
     }
   },
   watch: {
@@ -141,6 +148,7 @@ export default {
     getData() {
       apiGetPipeLineList({tree_id: this.tree_id}).then(res => {
         this.d = res.data
+        console.log(res.data)
       })
     },
     onAliveDetailBtnClick(row) {
@@ -164,7 +172,6 @@ export default {
     refreshPipeLineStatus(id) {
       apiGetPipeLineStatus({id: id}).then(res => {
         this.pipeline_status = res.data
-        console.log(res.data)
       })
     },
     onResetPipeLineBtnClick(row) {
@@ -225,6 +232,23 @@ export default {
           return 'green'
         case 6:
           return 'success'
+      }
+    },
+    onAutoRefreshChange(status) {
+      if (status === true) {
+        this.auto_refresh_id = setInterval(() => {
+          this.refreshPipeLineStatus(this.pipeline_run.id)
+        }, 2000)
+        this.$Message.success('已开启自动刷新')
+      } else {
+        this.$Message.info('已关闭自动刷新')
+        clearInterval(this.auto_refresh_id)
+      }
+    },
+    onDrawerClose() {
+      if (this.auto_refresh === true) {
+        this.$Message.info('已关闭自动刷新')
+        clearInterval(this.auto_refresh_id)
       }
     },
   }

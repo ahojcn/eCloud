@@ -18,6 +18,7 @@ export default {
       require: true,
       type: Number
     },
+    index: {},
   },
   data() {
     return {
@@ -37,7 +38,7 @@ export default {
       })
     },
     onSelectChange(value) {
-      this.$emit('onClusterSelected', value)
+      this.$emit('onClusterSelected', value, this.index)
     },
   }
 }

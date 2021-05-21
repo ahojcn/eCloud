@@ -27,7 +27,8 @@ function downloadAgent() {
   export ECLOUD_AGENT_HOSTID=$HOSTID
   export ECLOUD_CTR_IP=$CTR_IP
   export ECLOUD_CTR_PORT=$CTR_PORT
-  "./agent agent"
+  ls && pwd
+  ./agent agent
   echo $0 $1 $2 $3
 }
 

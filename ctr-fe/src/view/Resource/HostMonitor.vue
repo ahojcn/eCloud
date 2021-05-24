@@ -1,7 +1,7 @@
 <template>
-  <div style="height: 100vh">
+  <div style="height: 70vh">
     <MonitorMetricsSelect @onMonitorMetricsSelected="onMonitorMetricsSelected"></MonitorMetricsSelect>
-    <Chart :options="monitor_options"></Chart>
+    <Chart :options="monitor_options" id="host_monitor"></Chart>
   </div>
 </template>
 
@@ -20,6 +20,7 @@ export default {
         title: {
           text: '监控图'
         },
+        animation: false,
         dataZoom: [
           {
             id: 'dataZoomX',
@@ -105,7 +106,10 @@ export default {
           "from_time": from_time,
           "to_time": to_time
         }).then(res => {
-          this.monitor_options.series.push({type: "line", name: cols[i], data: res.data[0].Series[0].values})
+          this.monitor_options.series.push({
+            type: "line", name: cols[i], data: res.data[0].Series[0].values,
+            areaStyle: {}, showSymbol: false, hoverAnimation: false,
+          })
           this.monitor_options.legend.data.push(cols[i])
         })
       }

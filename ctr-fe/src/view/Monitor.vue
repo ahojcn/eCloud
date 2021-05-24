@@ -5,12 +5,17 @@
         <Chart ref="overview_chart" style="height: 300px" :options="overview_chart_options" id="overview"></Chart>
         <Card title="指标选择" style="min-height: 50vh">
           <div slot="extra">
-            <Tooltip :content="auto_refresh===true?'关闭自动刷新':'开启自动刷新'">
-              <i-switch v-model="auto_refresh" @on-change="onAutoRefreshChange"></i-switch>
-            </Tooltip>
-            <Button type="primary" @click="onRouterMonitorMetricsBtnClick">GET！</Button>
+            自动刷新
+            <i-switch v-model="auto_refresh" @on-change="onAutoRefreshChange" true-color="#13ce66" false-color="#ff4949" size="large"
+                      slot="extra">
+              <span slot="open">开</span>
+              <span slot="close">关</span>
+            </i-switch>
           </div>
           <Form>
+            <FormItem>
+              <Button long type="primary" @click="onRouterMonitorMetricsBtnClick">GET！</Button>
+            </FormItem>
             <FormItem label="一级指标">
               <Cascader :data="metrics" v-model="selected" filterable></Cascader>
             </FormItem>

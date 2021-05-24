@@ -2,6 +2,14 @@
   <Card>
     <div style="width: 100%; height: 100%">
       <Tabs @on-click="onClickTab">
+        <template slot="extra">
+          自动刷新
+          <i-switch v-model="auto_refresh" @on-change="onAutoFreshChange" true-color="#13ce66" false-color="#ff4949" size="large"
+                    slot="extra">
+            <span slot="open">开</span>
+            <span slot="close">关</span>
+          </i-switch>
+        </template>
         <TabPane v-for="(metric,index) in metrics" :key="index"
                  :label="metric" :name="metric">
           <CheckboxGroup v-model="cols_selected">
@@ -49,7 +57,10 @@ export default {
         ]
       },
       cols_selected: ['percent'],
-      datetime: [new Date('2021-04-10T10:32:00+08:00'), new Date('2021-04-26T10:33:00+08:00')],
+      datetime: [new Date('2021-05-10T10:32:00+08:00'), new Date('2021-05-29T10:33:00+08:00')],
+
+      auto_refresh: false,
+      auto_refresh_id: null,
     }
   },
   mounted() {
@@ -59,6 +70,17 @@ export default {
     onClickTab(name) {
       this.metrics_selected = name
       this.cols_selected.length = 0
+    },
+    onAutoFreshChange(status) {
+      if (status === true) {
+        this.auto_refresh_id = setInterval(()=>{
+          this.onClickBtnGet()
+        }, 2000)
+        this.$Message.success('自动刷新已开启：2s')
+      } else {
+        clearInterval(this.auto_refresh_id)
+        this.$Message.info('自动刷新已关闭')
+      }
     },
     onClickBtnGet() {
       if (this.metrics_selected !== '' && this.cols_selected.length !== 0) {

@@ -68,82 +68,11 @@ export default {
         {value: 'upstream_response_time', label: 'upstream_response_time(请求->分发请求)'},
       ],
       query_selected: ['request_time', 'upstream_response_time'],
-      datetime: [new Date('2021-05-19T10:32:00+08:00'), new Date('2021-05-21T10:33:00+08:00')],
+      datetime: [new Date('2021-05-21T09:00:00+08:00'), new Date('2021-05-21T09:10:00+08:00')],
 
       auto_refresh: false,
       auto_refresh_func: null,
 
-      chart_options_raw: {
-        title: {
-          text: '监控图',
-          left: 'center',
-        },
-        dataZoom: [
-          {
-            id: 'dataZoomX',
-            type: 'slider',
-            xAxisIndex: [0],
-            filterMode: 'filter', // 设定为 'filter' 从而 X 的窗口变化会影响 Y 的范围。
-            start: 0,
-            end: 100
-          },
-          {
-            id: 'dataZoomY',
-            type: 'slider',
-            yAxisIndex: [0],
-            filterMode: 'filter',
-            start: 0,
-            end: 100
-          }
-        ],
-        toolbox: {
-          show: true,
-          showTitle: false, // 隐藏默认文字，否则两者位置会重叠
-          feature: {
-            saveAsImage: {
-              show: true,
-              title: 'Save As Image'
-            },
-            magicType: {
-              type: ['line', 'bar', 'stack', 'tiled']
-            },
-            dataView: {
-              show: true,
-              title: 'Data View'
-            },
-            dataZoom: {
-              show: true,
-              title: '缩放'
-            }
-          },
-        },
-        tooltip: {
-          show: true,
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-          },
-        },
-        legend: {
-          data: [],
-          left: 10,
-          orient: 'vertical',
-        },
-        xAxis: {
-          type: 'time',
-          splitLine: {
-            show: false
-          },
-        },
-        yAxis: {
-          type: 'value',
-          boundaryGap: [0, '100%'],
-          splitLine: {
-            show: false
-          }
-        },
-        series: [],
-      },
       chart_options: {
         title: {
           text: '监控图',
@@ -297,6 +226,7 @@ export default {
               type: "line",
               showSymbol: false,
               name: this.query_selected[i],
+              areaStyle: {},
               data: res.data[0].Series[0].values
             })
             this.chart_options.animation = animation

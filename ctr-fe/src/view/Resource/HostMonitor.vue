@@ -18,9 +18,9 @@ export default {
     return {
       monitor_options: {
         title: {
-          text: '监控图'
+          text: '监控图',
+          left: 'center',
         },
-        animation: false,
         dataZoom: [
           {
             id: 'dataZoomX',
@@ -68,7 +68,9 @@ export default {
           },
         },
         legend: {
-          data: []
+          data: [],
+          left: 10,
+          orient: 'vertical',
         },
         xAxis: {
           type: 'time',

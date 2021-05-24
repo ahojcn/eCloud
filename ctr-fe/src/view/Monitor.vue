@@ -210,7 +210,13 @@ export default {
       }
 
       this.chart_options.series = []
-      this.chart_options.title.text = JSON.stringify(this.query_selected)
+      // this.chart_options.title.text = JSON.stringify(this.query_selected) + '\n' + JSON.stringify(this.selected)
+      this.chart_options.title.text = `
+        un=${this.selected[0]}\n
+        uri=${this.selected[1]}，docker=${this.selected[2]}\n
+        metrics=${this.query_selected}
+      `
+
       for (let i = 0; i < this.query_selected.length; i++) {
         apiQueryRouterMetrics({
           un: this.selected[0],

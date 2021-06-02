@@ -28,7 +28,6 @@ service.interceptors.request.use(
                 return qs.stringify(params, {arrayFormat: 'repeat'})
             }
         }
-        config.timeout = 1000 * 60 // 60s
         return config;
     },
     err => {

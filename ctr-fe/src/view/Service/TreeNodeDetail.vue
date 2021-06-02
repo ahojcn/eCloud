@@ -4,7 +4,7 @@
       <Tag :color="$store.state.tree_node_type[tree_node_detail.user_tree_info.type].color">
         {{ $store.state.tree_node_type[tree_node_detail.user_tree_info.type].title }}
       </Tag>
-      <strong style="font-size: 20px">{{ tree_node_detail.user_tree_info.un }}</strong>
+      <strong style="font-size: 20px">UN={{ tree_node_detail.user_tree_info.un }}</strong>
     </div>
 
     <Row :gutter="18">

@@ -29,23 +29,27 @@ func (s *Service) GetServiceInfo() (*ServiceInfo, error) {
 
 	svcTree, _ := TreeOne(map[string]interface{}{"id": s.TreeId})
 	opt := map[string]interface{}{
-		"name":  svcTree.Un,
 		"value": 100,
 	}
 
 	treeUnFlowMap := map[string]int{}
 	children := []map[string]interface{}{}
+	containerCount := 0
 	for treeIdStr := range flowMap {
 		treeId, _ := strconv.Atoi(treeIdStr)
 		t, _ := TreeOne(map[string]interface{}{"id": treeId})
+		c, _ := ClusterOne(map[string]interface{}{"tree_id": treeId})
+
 		treeUnFlowMap[t.Un] = flowMap[treeIdStr]
 		child := map[string]interface{}{
-			"name":  t.Un,
+			"name":  fmt.Sprintf("%s(%d)", t.Un, c.CurrentClusterNum),
 			"value": flowMap[treeIdStr],
 		}
 		children = append(children, child)
+		containerCount += c.CurrentClusterNum
 	}
 
+	opt["name"] = fmt.Sprintf("%s(%d)", svcTree.Un, containerCount)
 	opt["children"] = children
 	return &ServiceInfo{
 		Service:       s,

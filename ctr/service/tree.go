@@ -11,12 +11,12 @@ import (
 // CreateTreeWithUser 用户创建树
 func CreateTreeWithUser(user *model.User, data entity.CreateTreeNodeRequestData) error {
 	// 判断用户是否有这个 parent_id 节点的新增权限（4）
-	if *data.ParentId != 0 {
+	if *data.ParentId != model.PermAdd {
 		ut, has := model.UserTreeOne(map[string]interface{}{"user_id": user.Id, "tree_id": data.ParentId})
 		if !has {
 			return fmt.Errorf("没有权限")
 		}
-		if ut.Rights < 4 || ut.Rights > 6 {
+		if ut.Rights < model.PermAdd || ut.Rights > model.PermAdmin {
 			return fmt.Errorf("没有权限")
 		}
 	}
@@ -157,11 +157,11 @@ func AddUserTree(user *model.User, userId, treeId int64, rights int) error {
 	if !has {
 		return fmt.Errorf("你没有权限")
 	}
-	if ut.Rights != 6 {
+	if ut.Rights != model.PermAdmin {
 		return fmt.Errorf("你没有权限")
 	}
 
-	if rights < 0 || rights > 6 {
+	if rights < model.PermNoAccess || rights > model.PermAdmin {
 		return fmt.Errorf("权限错误:0-6")
 	}
 

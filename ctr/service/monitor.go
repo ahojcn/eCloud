@@ -38,7 +38,6 @@ func MonitorMetricsQuery(hostId int64, metrics string, cols []string, fromTime, 
 	for _, s := range cols {
 		ss = append(ss, fmt.Sprintf("\"%s\"", s))
 	}
-	fmt.Println(ss, cols)
 	cmd := fmt.Sprintf(`select %s from %s where host_id='%s' and time >= '%s' and time <= '%s'`,
 		strings.Join(ss, ","),
 		getTableNameByMetrics(metrics),

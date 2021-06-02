@@ -101,14 +101,14 @@ export default {
             data: [],
             orient: 'vertical',
             label: {
-              position: 'top',
+              position: 'bottom',
               verticalAlign: 'middle',
               align: 'center',
               fontSize: 15
             },
             leaves: {
               label: {
-                position: 'top',
+                position: 'bottom',
                 verticalAlign: 'middle',
                 align: 'center'
               }

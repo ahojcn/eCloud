@@ -1,7 +1,10 @@
 <template>
   <div>
     <div v-if="show_router_info">
-      <Card shadow title="接入层信息">
+      <Card shadow>
+        <template slot="title">
+          <h3>接入层信息：UN={{tree_node_info.user_tree_info.un}}</h3>
+        </template>
         <template slot="extra">
           <Button type="primary" icon="md-redo" @click="onRouterRedoBtnClick">重新部署接入层</Button>
         </template>

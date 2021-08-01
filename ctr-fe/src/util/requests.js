@@ -10,6 +10,7 @@ Notice.config({
 // axios 实例
 const service = axios.create({
     baseURL: 'http://127.0.0.1:10001/',
+    //baseURL: 'http://192.168.0.101:10001/',
     withCredentials: true, // send cookies when cross-domain requests
     headers: {
         'Content-Type': 'application/json;charset=UTF-8'

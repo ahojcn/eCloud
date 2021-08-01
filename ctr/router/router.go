@@ -26,7 +26,7 @@ func SetupRouter() *gin.Engine {
 	})
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080", "http://127.0.0.1:8080"}
+	config.AllowOrigins = []string{"http://localhost:8080", "http://127.0.0.1:8080", "http://192.168.0.101:8080"}
 	config.AllowCredentials = true
 	//config.AllowAllOrigins = true
 	Router.Use(cors.New(config))

@@ -84,8 +84,8 @@ func (g *g) loginRequired() (*model.User, error) {
 	sess := sessions.Default(g.C)
 	username := sess.Get("username")
 	if username == nil {
-		//return nil, errors.New("登录信息过期")
-		username = "ahojcn"
+		return nil, errors.New("登录信息过期")
+		//username = "ahojcn"
 	}
 
 	user, has := model.UserOne(map[string]interface{}{"username": username})
